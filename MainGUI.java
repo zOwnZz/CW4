@@ -3,7 +3,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+public class MainGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
