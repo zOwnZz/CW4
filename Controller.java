@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Controller {
     private ArrayList<CovidData> data;
@@ -7,7 +8,7 @@ public class Controller {
         CovidDataLoader loader = new CovidDataLoader();
         data = loader.load();
     }
-    // method returning specific data for scenes
+
     public HashMap<String, ArrayList<CovidData>> boroughAndData() {
         HashMap<String, ArrayList<CovidData>> boroughAndData = new HashMap<>();
         for(CovidData covid : data){
@@ -20,4 +21,13 @@ public class Controller {
         }
         return boroughAndData;
     }
+
+    public ArrayList<String> getBoroughs(){
+        ArrayList<String> processedData = new ArrayList<>();
+        for(int i = 0; i < 20; i++){
+            processedData.add(data.get(i).getBorough());
+        }
+        return processedData;
+    }
+
 }
