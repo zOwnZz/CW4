@@ -1,16 +1,16 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class ControllerGUI extends Application {
+
 
     @Override
     public void start(Stage primaryStage) {
         Controller controller = new Controller();
         BaseGUI challenge = new ChallengeGUI(controller);
 
-        // Get all scenes for the project
+        // Get different scenes
         Scene scene = challenge.getScene();
 
         // Set the scene on the stage
