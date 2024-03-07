@@ -9,10 +9,8 @@ public class ControllerGUI extends Application {
     public void start(Stage primaryStage) {
         Controller controller = new Controller();
         BaseGUI challenge = new ChallengeGUI(controller);
-        // Create a root node.
-        StackPane root = new StackPane();
 
-        // Create a scene with the root node with dimensions 300x250 (width x height)
+        // Get all scenes for the project
         Scene scene = challenge.getScene();
 
         // Set the scene on the stage
