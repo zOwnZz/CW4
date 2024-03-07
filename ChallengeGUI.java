@@ -1,17 +1,18 @@
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
 public class ChallengeGUI extends BaseGUI {
-    private int WIN_WIDTH, WIN_HEIGHT;
     private Controller controller;
 
-    public ChallengeGUI(int width, int height, Controller controller){
-        WIN_WIDTH = width;
-        WIN_HEIGHT = height;
+    public ChallengeGUI(Controller controller){
         this.controller = controller;
     }
     public Scene getScene(){
-        VBox root = new VBox();
+        BorderPane root = getRoot();
+
+        //root.setCenter(...); - Code for the components inside the panel
+
         return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
     }
 }
