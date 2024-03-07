@@ -3,7 +3,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class MainGUI extends Application {
+public class ControllerGUI extends Application {
     private int WIN_WIDTH = 1000;
     private int WIN_HEIGHT = 600;
 
