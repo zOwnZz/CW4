@@ -4,18 +4,16 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class ControllerGUI extends Application {
-    private int WIN_WIDTH = 1000;
-    private int WIN_HEIGHT = 600;
 
     @Override
     public void start(Stage primaryStage) {
         Controller controller = new Controller();
-        ChallengeGUI chellange = new ChallengeGUI(WIN_WIDTH, WIN_HEIGHT, controller);
+        BaseGUI challenge = new ChallengeGUI(controller);
         // Create a root node.
         StackPane root = new StackPane();
 
         // Create a scene with the root node with dimensions 300x250 (width x height)
-        Scene scene = chellange.getScene();
+        Scene scene = challenge.getScene();
 
         // Set the scene on the stage
         primaryStage.setScene(scene);
