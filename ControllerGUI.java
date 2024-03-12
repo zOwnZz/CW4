@@ -45,8 +45,8 @@ public class ControllerGUI extends Application {
         primaryStage.setScene(panels[nextCounter(ifPositive)].getScene());
     }
 
-    public void setIfAvailableFalse(){
-        ifAvailable = false;
+    public void setIfAvailableTrue(){
+        ifAvailable = true;
     }
     public Boolean getIfAvailable(){
         return ifAvailable;
