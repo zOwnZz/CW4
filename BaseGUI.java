@@ -104,7 +104,7 @@ public class BaseGUI {
 
     public void submitDate(){
         controller.updateData(selectedDates());
-        controllerGUI.setIfAvailableFalse();
+        controllerGUI.setIfAvailableTrue();
         controllerGUI.reloadScene();
     }
 
