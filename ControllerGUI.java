@@ -8,7 +8,7 @@ public class ControllerGUI extends Application {
     private Stage primaryStage;
     // Counter which scene is currently displayed
     private int counter;
-    public Boolean ifAvailable;
+    private Boolean ifAvailable;
 
     @Override
     public void start(Stage primaryStage) {
@@ -43,6 +43,13 @@ public class ControllerGUI extends Application {
      */
     public void changeScene(Boolean ifPositive){
         primaryStage.setScene(panels[nextCounter(ifPositive)].getScene());
+    }
+
+    public void setIfAvailableFalse(){
+        ifAvailable = false;
+    }
+    public Boolean getIfAvailable(){
+        return ifAvailable;
     }
 
     /**
