@@ -56,7 +56,7 @@ public class BaseGUI {
 
         nextButton.setOnAction(event -> controllerGUI.changeScene(true));
 
-        if(!controllerGUI.ifAvailable){
+        if(!controllerGUI.getIfAvailable()){
             backButton.setDisable(true);
             nextButton.setDisable(true);
         } else {
@@ -104,7 +104,7 @@ public class BaseGUI {
 
     public void submitDate(){
         controller.updateData(selectedDates());
-        controllerGUI.ifAvailable = true;
+        controllerGUI.setIfAvailableFalse();
         controllerGUI.reloadScene();
     }
 
