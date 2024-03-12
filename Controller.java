@@ -1,32 +1,45 @@
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class Controller {
     private ArrayList<CovidData> data;
 
-    public Controller() {
+    public Controller(){
         CovidDataLoader loader = new CovidDataLoader();
         data = loader.load();
     }
 
-    public double calculateTotalDeaths(String fromDate, String toDate) {
-        return data.stream()
-                .filter(covidData -> covidData.getDate().compareTo(fromDate) >= 0 && covidData.getDate().compareTo(toDate) <= 0)
-                .mapToInt(CovidData::getTotalDeaths)
-                .sum();
+    public HashMap<String, ArrayList<CovidData>> boroughAndData() {
+        HashMap<String, ArrayList<CovidData>> boroughAndData = new HashMap<>();
+        for(CovidData covid : data){
+            if(boroughAndData.containsKey(covid.getBorough()))
+                boroughAndData.get(covid.getBorough()).add(covid);
+            else {
+                boroughAndData.put(covid.getBorough(), new ArrayList<CovidData>());
+                boroughAndData.get(covid.getBorough()).add(covid);
+            }
+        }
+        return boroughAndData;
+    }
+ 
+    public ArrayList<String> getBoroughs(){
+        ArrayList<String> processedData = new ArrayList<>();
+        for(int i = 0; i < 20; i++){
+            processedData.add(data.get(i).getBorough());
+        }
+        return processedData;
+    }
+    public double calculateAverageCases() {
+        return 0;
     }
 
-    public double calculateAverageTotalCases(String fromDate, String toDate) {
-        List<CovidData> filteredData = data.stream()
-                .filter(covidData -> covidData.getDate().compareTo(fromDate) >= 0 && covidData.getDate().compareTo(toDate) <= 0)
-                .collect(Collectors.toList());
-
-        return filteredData.stream()
-                .mapToInt(CovidData::getTotalCases)
-                .average()
-                .orElse(0.0);
+    public int calculateTotalDeaths() {
+        return 0;
     }
 
-    // Implement other statistics methods here
+    public double calculateAverageStat(String measure) {
+
+    return 0;
+    }
 }
