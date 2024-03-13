@@ -1,0 +1,12 @@
+
+
+.button {
+    -fx-font: 18px "Serif";
+    -fx-background-color: rgb(28, 107, 175);
+    -fx-background-insets: 0;
+}
+
+/* Button style on hover*/
+.button:hover {
+    -fx-effect: dropshadow(gaussian, rgb(0, 0, 0), 3, 1, 0.0, 0.0);
+}

@@ -17,6 +17,14 @@ public class ControllerGUI extends Application {
         this.primaryStage = primaryStage;
         Controller controller = new Controller();
 
+        BaseGUI challenge = new ChallengeGUI(controller);
+        BaseGUI map = new MapGUI(controller);
+
+
+        // Get all scenes for the project
+     
+
+
         BaseGUI welcome = new WelcomeGUI(controller, this);
         BaseGUI challenge = new ChallengeGUI(controller, this);
         BaseGUI statistics = new StatisticsGUI(controller, this);
@@ -27,11 +35,13 @@ public class ControllerGUI extends Application {
         panels[2] = statistics;
         panels[3] = challenge;
 
+
         // Set the scene on the stage
         primaryStage.setScene(welcome.getScene());
 
         // Set the title of the stage (window)
         primaryStage.setTitle("COVID DATA");
+        primaryStage.getIcons().add(new Image("Coronavirus._SARS-CoV-2.png"));
 
         // Show the stage
         primaryStage.show();
