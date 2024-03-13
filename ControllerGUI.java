@@ -1,5 +1,7 @@
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.scene.image.*;
+
 
 public class ControllerGUI extends Application {
 
@@ -16,10 +18,6 @@ public class ControllerGUI extends Application {
         counter = 0;
         this.primaryStage = primaryStage;
         Controller controller = new Controller();
-
-        BaseGUI challenge = new ChallengeGUI(controller);
-        BaseGUI map = new MapGUI(controller);
-
 
         // Get all scenes for the project
      
