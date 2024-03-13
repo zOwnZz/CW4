@@ -1,4 +1,4 @@
- 
+import java.time.LocalDate;
 
 /**
  * Represents one record in the COVID dataset.
@@ -118,6 +118,10 @@ public class CovidData {
 
 	public int getTotalDeaths() {
 		return totalDeaths;
+	}
+
+	public LocalDate getDateFormat(){
+		return LocalDate.parse(date);
 	}
 
     @Override
