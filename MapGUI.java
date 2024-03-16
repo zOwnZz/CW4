@@ -3,11 +3,25 @@ import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import javafx.scene.shape.SVGPath;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MapGUI extends BaseGUI {   
     
     private Controller controller;
     private ArrayList<Button> boroughButtons = new ArrayList<Button>();
+    private String[] boroughs = {
+        "ENFI", "BARN", "HRGY", "WALT", "HRRW", "BREN", "CAMD", "ISLI", "HACK", "REDB", "HAVE",
+        "HILL", "EALI", "KENS", "WEST", "TOWH", "NEWH", "BARK", "HOUN", "HAMM", "WAND", "CITY",
+        "GWCH", "BEXL", "RICH", "MERT", "LAMB", "STHW", "LEWS", "KING", "SUTT", "CROY", "BROM"
+        };
+    
+    private String[] boroughsFull = {
+        "Enfield", "Barnet", "Haringey", "Waltham Forest", "Harrow", "Brent", "Camden", "Islington", "Hackney", "Redbridge", "Havering",
+        "Hillingdon", "Ealing", "Kensing And Chelsea", "Westminster", "Tower Hamlets", "Newham", "Barking", "Hounslow", "Hammersmith And Fulham", "Wandsworth", "City Of London",
+        "Greenwich", "Bexley", "Richmond", "Merton", "Lambeth", "Southwark", "Lewisham", "Kingston Upon Thames", "Sutton", "Croydon", "Bromley"
+        };
+
+
 
     public MapGUI(Controller controller, ControllerGUI controllerGUI){
         super(controller, controllerGUI);
@@ -18,13 +32,6 @@ public class MapGUI extends BaseGUI {
         BorderPane root = getRoot();
         Pane map = new Pane();
         
-        
-        String[] boroughs = {
-        "ENFI", "BARN", "HRGY", "WALT", "HRRW", "BREN", "CAMD", "ISLI", "HACK", "REDB", "HAVE",
-        "HILL", "EALI", "KENS", "WEST", "TOWH", "NEWH", "BARK", "HOUN", "HAMM", "WAND", "CITY",
-        "GWCH", "BEXL", "RICH", "MERT", "LAMB", "STHW", "LEWS", "KING", "SUTT", "CROY", "BROM"
-        };
-
         SVGPath hexagon = new SVGPath();
         hexagon.setContent("M 0.0 -50 L 43 -25 L 43 25 L 6e-15 50 L -43 25 L -43 -25 Z");
 
@@ -104,6 +111,11 @@ public class MapGUI extends BaseGUI {
             b.setLayoutY(yCord); // Set Y coordinate for the button
             map.getChildren().add(b); // Add the button to the pane
             xCord += 84;
+
+
+            HashMap <String, ArrayList<CovidData>> maps = new HashMap<>();
+            maps = controller.boroughAndData();
+            System.out.println(maps.toString());
         }
 
         root.setCenter(map);
@@ -111,6 +123,10 @@ public class MapGUI extends BaseGUI {
     }
 
     private void infoWindow(String borough){
+
+    }
+
+    private void deathVisuals(){
 
     }
 }
