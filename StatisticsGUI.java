@@ -11,19 +11,20 @@ public class StatisticsGUI extends BaseGUI {
     private Controller controller;
     private Text statLabel;
     private int currentStatIndex = 0;
-    private String[] statistics = new String[4]; 
+    private String[] statistics = new String[4];
 
-    public StatisticsGUI(Controller controller) {
+    public StatisticsGUI(Controller controller, ControllerGUI controllerGUI){
+        super(controller, controllerGUI);
         this.controller = controller;
         populateStatistics();
     }
 
     private void populateStatistics() {
-        
-        statistics[0] = ": " + controller.calculateAverageStat("");
-        statistics[1] = ": " + controller.calculateAverageStat("");
+
+        statistics[0] = "Average Parks GMR: " + controller.calculateAverageParksGMR();
+        statistics[1] = "Average Transit GMR: " + controller.calculateAverageTransitGMR();
         statistics[2] = "Total Deaths: " + controller.calculateTotalDeaths();
-        statistics[3] = "Average Total Cases: " + controller.calculateAverageCases();
+        statistics[3] = "Average Total Cases: " + controller.calculateAverageTotalCases();
     }
 
     @Override
@@ -53,10 +54,10 @@ public class StatisticsGUI extends BaseGUI {
     }
 
     private void updateStatLabel() {
-    statLabel.setText(statistics[currentStatIndex]);
-    statLabel.setWrappingWidth(200); // Sets the wrapping width to a fixed value
-    statLabel.setTextAlignment(TextAlignment.CENTER); // Ensure the text is centered
-    
+        statLabel.setText(statistics[currentStatIndex]);
+        statLabel.setWrappingWidth(200); // Sets the wrapping width to a fixed value
+        statLabel.setTextAlignment(TextAlignment.CENTER); // Ensure the text is centered
+
     }
 
 }
