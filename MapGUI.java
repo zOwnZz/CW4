@@ -1,21 +1,12 @@
-import javafx.geometry.Insets;
 import javafx.scene.*;
-import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.SVGPath;
-import javafx.scene.web.WebView;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MapGUI extends BaseGUI {   
     
     private Controller controller;
-    private String clickedBorough;
     private ArrayList<Button> boroughButtons = new ArrayList<Button>();
 
     public MapGUI(Controller controller, ControllerGUI controllerGUI){
@@ -26,7 +17,8 @@ public class MapGUI extends BaseGUI {
     public Scene getScene (){
         BorderPane root = getRoot();
         Pane map = new Pane();
-
+        
+        
         String[] boroughs = {
         "ENFI", "BARN", "HRGY", "WALT", "HRRW", "BREN", "CAMD", "ISLI", "HACK", "REDB", "HAVE",
         "HILL", "EALI", "KENS", "WEST", "TOWH", "NEWH", "BARK", "HOUN", "HAMM", "WAND", "CITY",
@@ -38,28 +30,29 @@ public class MapGUI extends BaseGUI {
 
         for (int i = 0; i < boroughs.length; i++) {
             Button button = new Button(boroughs[i]);
-            button.setOnAction(event -> clickedBorough = button.getText());
+            button.setOnAction(event -> infoWindow(button.getText()));
             button.setShape(hexagon);
             button.setPickOnBounds(false); // Ensure clicks are only registered on the non-transparent parts of the shape
-            button.setMinSize(80, 90);
-            //w,h
-            boroughButtons.add(button);
+            button.setMinSize(80, 90); //w,h
+            if(boroughButtons.size() < 33){
+                boroughButtons.add(button);
+            }
         
         }
 
         int yCord = 0;
         int xCord = 0;
-
+        
         for (Button b : boroughButtons) {
             int index = boroughButtons.indexOf(b);
 
             if(index == 0){
-                yCord = 60;
+                yCord = 40;
                 xCord = 506;
             }
 
             else if(index < 4){
-                yCord = 132;
+                yCord = 112;
 
                 if(index == 1){
                  xCord = 380;
@@ -67,7 +60,7 @@ public class MapGUI extends BaseGUI {
             }
             
             else if(index < 11){
-                yCord = 204;
+                yCord = 184;
                     
                 if(index == 4){
                   xCord = 254;
@@ -75,7 +68,7 @@ public class MapGUI extends BaseGUI {
             }
 
             else if(index < 18){
-                yCord = 276;
+                yCord = 256;
                     
                 if(index == 11){
                   xCord = 212;
@@ -83,7 +76,7 @@ public class MapGUI extends BaseGUI {
             }          
 
             else if(index < 24){
-                yCord = 348;
+                yCord = 328;
                     
                 if(index == 18){
                   xCord = 254;
@@ -91,7 +84,7 @@ public class MapGUI extends BaseGUI {
             }
 
             else if(index < 29){
-                yCord = 420;
+                yCord = 400;
                     
                 if(index == 24){
                   xCord = 296;
@@ -99,7 +92,7 @@ public class MapGUI extends BaseGUI {
             } 
                 
             else{
-                yCord = 492;
+                yCord = 472;
                     
                 if(index == 29){
                   xCord = 338;
@@ -115,6 +108,10 @@ public class MapGUI extends BaseGUI {
 
         root.setCenter(map);
         return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
+    }
+
+    private void infoWindow(String borough){
+
     }
 }
 
