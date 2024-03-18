@@ -29,34 +29,48 @@ public class StatisticsGUI extends BaseGUI {
 
     @Override
     public Scene getScene() {
-        BorderPane root = getRoot();
+    BorderPane root = getRoot();
 
-        statLabel = new Text(statistics[currentStatIndex]); // Default to the first statistic
+    statLabel = new Text(statistics[currentStatIndex]); 
+    statLabel.setWrappingWidth(200); 
+    statLabel.setTextAlignment(TextAlignment.CENTER); 
 
-        Button backButton = new Button("<");
-        backButton.setOnAction(e -> {
-            currentStatIndex = (currentStatIndex - 1 + statistics.length) % statistics.length;
-            updateStatLabel();
-        });
+    Button backButton = new Button("<");
+    backButton.setOnAction(e -> {
+        currentStatIndex = (currentStatIndex - 1 + statistics.length) % statistics.length;
+        updateStatLabel();
+    });
 
-        Button forwardButton = new Button(">");
-        forwardButton.setOnAction(e -> {
-            currentStatIndex = (currentStatIndex + 1) % statistics.length;
-            updateStatLabel();
-        });
+    Button forwardButton = new Button(">");
+    forwardButton.setOnAction(e -> {
+        currentStatIndex = (currentStatIndex + 1) % statistics.length;
+        updateStatLabel();
+    }); 
 
-        HBox navigationBox = new HBox(10, backButton, statLabel, forwardButton);
-        navigationBox.setAlignment(Pos.CENTER);
+    
+    HBox backButtonBox = new HBox(backButton);
+    backButtonBox.setAlignment(Pos.CENTER_LEFT);
 
-        root.setCenter(navigationBox);
+    HBox statLabelBox = new HBox(statLabel);
+    statLabelBox.setAlignment(Pos.CENTER);
 
-        return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
+    HBox forwardButtonBox = new HBox(forwardButton);
+    forwardButtonBox.setAlignment(Pos.CENTER_RIGHT);
+
+
+    HBox navigationBox = new HBox(backButtonBox, statLabelBox, forwardButtonBox);
+    navigationBox.setAlignment(Pos.CENTER);
+    navigationBox.setSpacing(10); 
+
+    root.setCenter(navigationBox);
+
+    return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
     }
 
     private void updateStatLabel() {
         statLabel.setText(statistics[currentStatIndex]);
-        statLabel.setWrappingWidth(200); // Sets the wrapping width to a fixed value
-        statLabel.setTextAlignment(TextAlignment.CENTER); // Ensure the text is centered
+        statLabel.setWrappingWidth(200); 
+        statLabel.setTextAlignment(TextAlignment.CENTER); 
 
     }
 
