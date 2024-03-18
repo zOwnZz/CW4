@@ -2,6 +2,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 public class Controller {
     private ArrayList<CovidData> data;
@@ -51,24 +52,29 @@ public class Controller {
                 .max(Comparator.naturalOrder())
                 .orElse(null);
     }
+    
+     private Stream<CovidData> getFilteredData() {
+        return data.stream().filter(covid -> 
+            (covid.getDateFormat().isEqual(startDate) || covid.getDateFormat().isAfter(startDate)) && 
+            (covid.getDateFormat().isEqual(endDate) || covid.getDateFormat().isBefore(endDate)));
+    }
 
     public double calculateAverageTotalCases() {
-    return data.stream().mapToInt(CovidData::getTotalCases).average().orElse(Double.NaN);
-     }
-
+        return getFilteredData().mapToInt(CovidData::getTotalCases).average().orElse(Double.NaN);
+    }
 
     public int calculateTotalDeaths() {
-    return data.stream().mapToInt(CovidData::getTotalDeaths).sum();
+        return getFilteredData().mapToInt(CovidData::getTotalDeaths).sum();
     }
-
 
     public double calculateAverageParksGMR() {
-    return data.stream().mapToInt(CovidData::getParksGMR).average().orElse(Double.NaN);
-     }
-
-    public double calculateAverageTransitGMR() {
-    return data.stream().mapToInt(CovidData::getTransitGMR).average().orElse(Double.NaN);
+        return getFilteredData().mapToInt(CovidData::getParksGMR).average().orElse(Double.NaN);
     }
 
+    public double calculateAverageTransitGMR() {
+        return getFilteredData().mapToInt(CovidData::getTransitGMR).average().orElse(Double.NaN);
+    }
+
+    
 
 }
