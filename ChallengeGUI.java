@@ -148,6 +148,6 @@ public class ChallengeGUI extends BaseGUI {
 
         root.setCenter(center);
 
-        return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
+        return new Scene(root, winWidth, winHeight);
     }
 }
