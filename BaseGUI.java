@@ -32,7 +32,6 @@ public class BaseGUI {
     }
     public BaseGUI(Controller controller, ControllerGUI controllerGUI, Boolean ifFirst){
         init(controller, controllerGUI);
-        setButtonsSpacing(controllerGUI.getStageWidth());
     }
 
     private void init(Controller controller, ControllerGUI controllerGUI){
@@ -40,6 +39,7 @@ public class BaseGUI {
         this.controllerGUI = controllerGUI;
         minDate = controller.getMinDate();
         maxDate = controller.getMaxDate();
+        setButtonsSpacing(controllerGUI.getStageWidth());
     }
 
     // -------------- Getters and setters --------------
