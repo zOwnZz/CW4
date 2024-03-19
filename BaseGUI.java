@@ -1,35 +1,54 @@
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.control.*;
 import java.time.LocalDate;
-import javafx.scene.layout.HBox;
+
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.DateCell;
 
+
+
 public class BaseGUI {
 
+    // -------------- Attributes --------------
 
-    protected int WIN_WIDTH = 1000;
-    protected int WIN_HEIGHT = 600;
+    protected double winWidth = 1000;
+    protected double winHeight = 600;
     private Controller controller;
     private LocalDate minDate, maxDate, startDate, endDate;
     private DatePicker startDatePicker, endDatePicker;
     private ControllerGUI controllerGUI;
+    private HBox buttons = new HBox();
+    private final double BUTTONS_SPACING = 200;
 
+    // -------------- Constructors and initializer --------------
 
     public BaseGUI(Controller controller, ControllerGUI controllerGUI){
+        init(controller, controllerGUI);
+        winHeight = controllerGUI.getStageHeight();
+        winWidth = controllerGUI.getStageWidth();
+    }
+    public BaseGUI(Controller controller, ControllerGUI controllerGUI, Boolean ifFirst){
+        init(controller, controllerGUI);
+        setButtonsSpacing(controllerGUI.getStageWidth());
+    }
+
+    private void init(Controller controller, ControllerGUI controllerGUI){
         this.controller = controller;
         this.controllerGUI = controllerGUI;
         minDate = controller.getMinDate();
         maxDate = controller.getMaxDate();
     }
 
+    // -------------- Getters and setters --------------
+
     /**
      * Method that returns a scene. Should be overriden in each GUI class
      */
     public Scene getScene(){
-        return new Scene(new VBox(), WIN_WIDTH, WIN_HEIGHT);
+        return new Scene(new VBox(), winWidth, winHeight);
     };
 
     /**
@@ -38,19 +57,15 @@ public class BaseGUI {
     protected BorderPane getRoot(){
         BorderPane root = new BorderPane();
 
-        root.setBottom(buttons());
-        root.setTop(menuTab());
+        root.setBottom(getButtons());
+        root.setTop(getMenuTab());
 
         return root;
     }
 
-    private HBox buttons() {
-        HBox buttons = new HBox();
-
+    private HBox getButtons() {
         Button nextButton = new Button(">");
         Button backButton = new Button("<");
-        // Make win width dynamic, to be resizable
-        buttons.setSpacing(WIN_WIDTH-50);
 
         backButton.setOnAction(event -> controllerGUI.changeScene(false));
 
@@ -65,10 +80,19 @@ public class BaseGUI {
         }
 
         buttons.getChildren().addAll(backButton, nextButton);
+
+        backButton.setAlignment(Pos.BOTTOM_LEFT);
+        nextButton.setAlignment(Pos.BOTTOM_RIGHT);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setPadding(new Insets(10, 10, 10, 10));
+        buttons.setStyle("-fx-background-color: #0f0fff;");
+
+        BorderPane.setMargin(buttons, new javafx.geometry.Insets(10));
+
         return buttons;
     }
 
-    private HBox menuTab(){
+    private HBox getMenuTab(){
         HBox menuTab = new HBox();
 
         startDatePicker = new DatePicker();
@@ -99,12 +123,24 @@ public class BaseGUI {
         endDatePicker.setValue(maxDate);
         menuTab.getChildren().addAll(startDatePicker, endDatePicker, submitButton);
 
+        menuTab.setAlignment(Pos.CENTER_RIGHT);
+        BorderPane.setMargin(menuTab, new javafx.geometry.Insets(10, 40, 10, 10));
+        menuTab.setSpacing(15);
+        menuTab.setStyle("-fx-background-color: #f0f0ff;");
+        menuTab.setPadding(new javafx.geometry.Insets(15));
+
         return menuTab;
     }
 
+    public void setButtonsSpacing(double spacing){
+        buttons.setSpacing(spacing - BUTTONS_SPACING);
+    }
+
+    // -------------- Auxiliary methods --------------
+
     public void submitDate(){
         controller.updateData(selectedDates());
-        controllerGUI.setIfAvailableFalse();
+        controllerGUI.setIfAvailableTrue();
         controllerGUI.reloadScene();
     }
 
