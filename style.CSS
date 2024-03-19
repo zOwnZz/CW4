@@ -1,0 +1,8 @@
+/* Updated style.css */
+
+.button:hover {
+    -fx-border-width: 2px;
+    -fx-border-color: rgb(0, 0, 0);
+    cursor: pointer;
+}
+
