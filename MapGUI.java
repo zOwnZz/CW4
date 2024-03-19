@@ -1,10 +1,7 @@
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 
@@ -36,6 +33,6 @@ public class MapGUI extends BaseGUI{
         //return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
         //return scene;
         root.setCenter(center);
-        return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
+        return new Scene(root, winWidth, winHeight);
     }
 }
