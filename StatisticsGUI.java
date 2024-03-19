@@ -3,7 +3,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.text.TextAlignment;
 
@@ -50,7 +49,7 @@ public class StatisticsGUI extends BaseGUI {
 
         root.setCenter(navigationBox);
 
-        return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
+        return new Scene(root, winWidth, winHeight);
     }
 
     private void updateStatLabel() {
