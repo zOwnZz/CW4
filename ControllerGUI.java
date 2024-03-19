@@ -3,35 +3,26 @@ import javafx.stage.Stage;
 
 public class ControllerGUI extends Application {
 
-    // Array with all GUI objects
-    private BaseGUI[] panels = new BaseGUI[4];
+    // -------------- Attributes --------------
+
     private Stage primaryStage;
-    // Counter which scene is currently displayed
     private int counter;
     private Boolean ifAvailable;
+    Controller controller = new Controller();
+
+    // -------------- Methods --------------
 
     @Override
     public void start(Stage primaryStage) {
         ifAvailable = false;
         counter = 0;
         this.primaryStage = primaryStage;
-        Controller controller = new Controller();
 
-        BaseGUI welcome = new WelcomeGUI(controller, this);
-        BaseGUI challenge = new ChallengeGUI(controller, this);
-        BaseGUI statistics = new StatisticsGUI(controller, this);
-        BaseGUI map = new MapGUI(controller, this);
-
-        panels[0] = welcome;
-        panels[1] = map;
-        panels[2] = statistics;
-        panels[3] = challenge;
-
-        // Set the scene on the stage
-        primaryStage.setScene(welcome.getScene());
-
-        // Set the title of the stage (window)
-        primaryStage.setTitle("COVID DATA");
+        // First welcome scene loaded and displayed
+        BaseGUI welcome2 = new WelcomeGUI(controller, this, true);
+        primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> welcome2.setButtonsSpacing((double) newValue));
+        primaryStage.setScene(welcome2.getScene());
+        primaryStage.setTitle("Welcome!");
 
         // Show the stage
         primaryStage.show();
@@ -42,22 +33,23 @@ public class ControllerGUI extends Application {
      * @param ifPositive if the next panel or previous panel button was clicked
      */
     public void changeScene(Boolean ifPositive){
-        primaryStage.setScene(panels[nextCounter(ifPositive)].getScene());
-    }
-
-    public void setIfAvailableFalse(){
-        ifAvailable = false;
-    }
-    public Boolean getIfAvailable(){
-        return ifAvailable;
+        double width = primaryStage.getWidth();
+        setScene(nextCounter(ifPositive));
+        primaryStage.setWidth(width);
     }
 
     /**
      * Open the current scene again, so that all new data is fetched
      */
     public void reloadScene(){
-        primaryStage.setScene(panels[counter].getScene());
+        double width = primaryStage.getWidth();
+        double height = primaryStage.getHeight();
+        setScene(counter);
+        primaryStage.setWidth(width);
+        primaryStage.setHeight(height);
     }
+
+    // -------------- Auxiliary methods --------------
 
     /**
      * Calculate the next index of the displayed panel
@@ -74,6 +66,53 @@ public class ControllerGUI extends Application {
         }
         return counter;
     }
+
+    private void setScene(int nextCounterInt){
+        switch (nextCounterInt){
+            case 0:
+                BaseGUI welcome2 = new WelcomeGUI(controller, this);
+                primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> welcome2.setButtonsSpacing((double) newValue));
+                primaryStage.setScene(welcome2.getScene());
+                primaryStage.setTitle("Welcome!");
+                break;
+            case 1:
+                BaseGUI map2 = new MapGUI(controller, this);
+                primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> map2.setButtonsSpacing((double) newValue));
+                primaryStage.setScene(map2.getScene());
+                primaryStage.setTitle("Map!");
+                break;
+            case 2:
+                BaseGUI statistics2 = new StatisticsGUI(controller, this);
+                primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> statistics2.setButtonsSpacing((double) newValue));
+                primaryStage.setScene(statistics2.getScene());
+                primaryStage.setTitle("Statistics!");
+                break;
+            case 3:
+                BaseGUI challenge2 = new ChallengeGUI(controller, this);
+                primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> challenge2.setButtonsSpacing((double) newValue));
+                primaryStage.setScene(challenge2.getScene());
+                primaryStage.setTitle("Simulation!");
+                break;
+        }
+    }
+
+    // -------------- Getters and Setters --------------
+
+    public void setIfAvailableTrue(){
+        ifAvailable = true;
+    }
+    public Boolean getIfAvailable(){
+        return ifAvailable;
+    }
+
+    public double getStageWidth(){
+        return primaryStage.getWidth();
+    }
+    public double getStageHeight(){
+        return primaryStage.getHeight();
+    }
+
+    // -------------- Main method --------------
 
     public static void main(String[] args) {
         // Launch the JavaFX application
