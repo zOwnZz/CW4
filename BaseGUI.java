@@ -2,10 +2,10 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+
 import java.time.LocalDate;
 import javafx.scene.layout.HBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.DateCell;
 
 public class BaseGUI {
 
@@ -113,8 +113,14 @@ public class BaseGUI {
         endDate = endDatePicker.getValue();
 
         if (!validateDates(startDate, endDate)) {
-
+            
             System.out.println("wrong dates chosen");
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error---Invalid Dates Selected");
+            alert.setHeaderText(null);
+            alert.setContentText("Invalid Dates Selected\n Try Again");
+            alert.showAndWait();
+            
 
             startDatePicker.setValue(null);
             endDatePicker.setValue(null);
