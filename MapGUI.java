@@ -171,14 +171,24 @@ public class MapGUI extends BaseGUI {
 
         //Create gui components to present the data in the new window
         VBox root2 = new VBox();
+        HBox hbox = new HBox();
         Stage stage = new Stage();
-        Scene scene = new Scene(root2, 1200, 500);
+        Scene scene = new Scene(root2, 1180, 550);
         Label boroughLbl = new Label(fName);
+        ComboBox<String> sortComboBox = new ComboBox<>();//Combobox for sorting
+        Button sortButton = new Button("Sort");
         TableView<CovidData> table = new TableView<>();//Table of object type CovidData
-        
+
         //present the new window
         table.setMinSize(1000, 500);
-        root2.getChildren().add(boroughLbl);
+        sortComboBox.setValue("Date"); // Set default value
+        hbox.setPadding(new Insets(0, 0, 0, 10)); // Top, Right, Bottom, Left padding
+        hbox.setSpacing(10);
+        boroughLbl.setStyle("-fx-font-size: 10pt;");
+        hbox.getChildren().add(boroughLbl);
+        hbox.getChildren().add(sortComboBox);
+        hbox.getChildren().add(sortButton);
+        root2.getChildren().add(hbox);
         root2.getChildren().add(table);
         stage.setTitle(fName);
         stage.getIcons().add(new Image("Coronavirus._SARS-CoV-2.png"));
@@ -194,6 +204,8 @@ public class MapGUI extends BaseGUI {
             "Date", "Retail/Recreation GMR", "Grocery/Pharmacy GMR", "Parks GMR", "Transit GMR", 
             "Workplaces GMR","Residential GMR", "New Cases", "Total Cases", "New Deaths", "Total Deaths",
         };
+
+        HashMap<String, TableColumn<CovidData, String>> columnsLink = new HashMap<>();
         //fill the table with titles for the columns and what attributes of object type Covid Data to expect in each column
         for (int i = 0; i < columns.length; i++) {
             TableColumn<CovidData, String> column = new TableColumn<>(columns[i]);
@@ -201,6 +213,7 @@ public class MapGUI extends BaseGUI {
             if(i == 1 || i == 2|| i == 5|| i == 6){
                 column.setMinWidth(150); // Set minimum width
             }
+            columnsLink.put(columns[i],column);
             table.getColumns().add(column);
         }
                 
@@ -214,6 +227,15 @@ public class MapGUI extends BaseGUI {
                 }
             }
         }
+
+        //combo box for sorting
+        sortComboBox.getItems().addAll(columns);
+        sortButton.setOnAction(e -> {
+            String selectedColumn = sortComboBox.getValue();
+            table.getSortOrder().clear();
+            table.getSortOrder().add(columnsLink.get(selectedColumn));
+            table.sort();
+        });
     }
 
     /**
