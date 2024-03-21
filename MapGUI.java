@@ -176,7 +176,6 @@ public class MapGUI extends BaseGUI {
         Scene scene = new Scene(root2, 1180, 550);
         Label boroughLbl = new Label(fName);
         ComboBox<String> sortComboBox = new ComboBox<>();//Combobox for sorting
-        Button sortButton = new Button("Sort");
         TableView<CovidData> table = new TableView<>();//Table of object type CovidData
 
         //present the new window
@@ -187,7 +186,6 @@ public class MapGUI extends BaseGUI {
         boroughLbl.setStyle("-fx-font-size: 10pt;");
         hbox.getChildren().add(boroughLbl);
         hbox.getChildren().add(sortComboBox);
-        hbox.getChildren().add(sortButton);
         root2.getChildren().add(hbox);
         root2.getChildren().add(table);
         stage.setTitle(fName);
@@ -228,9 +226,10 @@ public class MapGUI extends BaseGUI {
             }
         }
 
-        //combo box for sorting
         sortComboBox.getItems().addAll(columns);
-        sortButton.setOnAction(e -> {
+        //automattically sorts the data depending on the selected column in the combobox
+        sortComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+            table.getSortOrder().clear();
             String selectedColumn = sortComboBox.getValue();
             table.getSortOrder().clear();
             table.getSortOrder().add(columnsLink.get(selectedColumn));
