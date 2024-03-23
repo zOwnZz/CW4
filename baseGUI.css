@@ -1,0 +1,139 @@
+@font-face {
+    src: url('Montserrat.ttf');
+}
+
+@font-face {
+    src: url('Metropolis.otf');
+}
+
+.root {
+ }
+
+#welcomeTitle {
+    -fx-font-family: 'Montserrat Thin';
+}
+
+Text, Label {
+    -fx-font-family: 'Metropolis';
+}
+
+#header{
+  -fx-background-color: #03256C;
+}
+
+#bodyPane, #bottomPane {
+  -fx-background-color: #2541B2;
+}
+
+.date-picker {
+    -fx-background-radius: 0px;
+    -fx-background-color: transparent;
+    -fx-effect: dropshadow(two-pass-box, #FFFFFF, 0, 0, 1, 1);
+}
+
+.date-picker > .text-field {
+    -fx-background-color: #2541B2;
+    -fx-text-fill: white;
+}
+
+.date-picker > .arrow-button {
+    -fx-background-color: #FFFFFF;   
+    -fx-cursor: hand;
+}
+
+.date-picker .arrow-button .arrow {
+    -fx-background-color: #2541B2;
+}
+
+.date-picker-popup {
+    -fx-text-fill: #000000;
+}
+
+.calendar-grid {
+    -fx-background-color: rgb(20, 156, 255);
+}
+
+.date-picker-popup > .month-year-pane {
+    -fx-base: #1d1d1d ;
+    -fx-mark-highlight-color: -fx-light-text-color ;
+}
+
+Text, Label {
+  -fx-text-fill: #FFFFFF;
+  -fx-fill: #FFFFFF;
+}
+
+.SVG {
+    -fx-stroke-width: 3px;
+}
+
+.SVG:hover {
+    -fx-stroke: #FFFFFF;
+}
+
+.SVG:pressed {
+    -fx-scale-x: 0.75;
+    -fx-scale-y: 0.75;
+}
+
+#submitButton {
+    -fx-cursor: hand;
+    -fx-background-color: #2541B2;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(two-pass-box, #FFFFFF, 0, 0, 1, 1);
+    -fx-font-family: 'Segoe UI Semibold';
+}
+
+#submitButton:pressed {
+    -fx-effect: innershadow(two-pass-box , white , 0, 0, -1, -1)
+}
+
+.navButton {
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+    -fx-pref-width: 80px;
+    -fx-pref-height: 30px;
+    -fx-border-width: 3px;
+    -fx-border-color: #FFFFFF;
+    -fx-background-color: none;
+    -fx-border-radius: 10px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'Segoe UI Semibold';
+    -fx-font-size: 20;
+}
+
+.navButton:hover {
+    -fx-background-color: white;
+    -fx-text-fill: #2541B2;
+}
+
+.chart-series-line {
+    -fx-stroke-width: 1px;
+}
+
+.default-color0.chart-series-line { -fx-stroke: #FF0000; }
+
+.chart-plot-background {
+    -fx-background-color: #FFFFFF;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: transparent;
+}
+
+.subPanelButton {
+    -fx-background-color: none;
+    -fx-font-size: 30;
+    -fx-font-family: 'Segoe UI Semibold';
+    -fx-text-fill: #FFFFFF;
+    -fx-cursor: hand;
+}
+
+.subPanelButton:pressed {
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
