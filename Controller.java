@@ -2,11 +2,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 public class Controller {
     private ArrayList<CovidData> data;
     private LocalDate startDate, endDate;
+    private HashMap<String, ArrayList<CovidData>> boroughAndData;
 
     public Controller(){
         CovidDataLoader loader = new CovidDataLoader();
@@ -52,29 +52,63 @@ public class Controller {
                 .max(Comparator.naturalOrder())
                 .orElse(null);
     }
-    
-     private Stream<CovidData> getFilteredData() {
-        return data.stream().filter(covid -> 
-            (covid.getDateFormat().isEqual(startDate) || covid.getDateFormat().isAfter(startDate)) && 
-            (covid.getDateFormat().isEqual(endDate) || covid.getDateFormat().isBefore(endDate)));
+
+    public double calculateAverageTotalCases(HashMap<String, ArrayList<CovidData>> boroughAndData) {
+    long sumTotalCases = 0;
+    int count = 0;
+    for (ArrayList<CovidData> dataList : boroughAndData.values()) {
+        for (CovidData data : dataList) {
+            sumTotalCases += data.getTotalCases();
+            count++;
+        }
+    }
+    return count > 0 ? Double.parseDouble(String.format("%.3f", (double) sumTotalCases / count)) : 0;
     }
 
-    public double calculateAverageTotalCases() {
-        return getFilteredData().mapToInt(CovidData::getTotalCases).average().orElse(Double.NaN);
+
+
+
+    public int calculateTotalDeaths(HashMap<String, ArrayList<CovidData>> boroughAndData) {
+    int sumTotalDeaths = 0;
+    for (ArrayList<CovidData> dataList : boroughAndData.values()) {
+        for (CovidData data : dataList) {
+            sumTotalDeaths += data.getTotalDeaths();
+        }
+    }
+    return sumTotalDeaths;
     }
 
-    public int calculateTotalDeaths() {
-        return getFilteredData().mapToInt(CovidData::getTotalDeaths).sum();
+
+ 
+    public double calculateAverageParksGMR(HashMap<String, ArrayList<CovidData>> boroughAndData) {
+    long sumParksGMR = 0;
+    int count = 0;
+    for (ArrayList<CovidData> dataList : boroughAndData.values()) {
+        for (CovidData data : dataList) {
+            sumParksGMR += data.getParksGMR();
+            count++;
+        }
+    }
+    return count > 0 ? Double.parseDouble(String.format("%.3f", (double) sumParksGMR / count)) : 0;
     }
 
-    public double calculateAverageParksGMR() {
-        return getFilteredData().mapToInt(CovidData::getParksGMR).average().orElse(Double.NaN);
+
+
+
+
+    public double calculateAverageTransitGMR(HashMap<String, ArrayList<CovidData>> boroughAndData) {
+    long sumTransitGMR = 0;
+    int count = 0;
+    for (ArrayList<CovidData> dataList : boroughAndData.values()) {
+        for (CovidData data : dataList) {
+            sumTransitGMR += data.getTransitGMR();
+            count++;
+        }
+    }
+    return count > 0 ? Double.parseDouble(String.format("%.3f", (double) sumTransitGMR / count)) : 0;
     }
 
-    public double calculateAverageTransitGMR() {
-        return getFilteredData().mapToInt(CovidData::getTransitGMR).average().orElse(Double.NaN);
-    }
-
-    
 
 }
+
+    
