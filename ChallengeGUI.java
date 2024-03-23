@@ -20,12 +20,12 @@ public class ChallengeGUI extends BaseGUI {
     private Boolean firstChart;
     private String cssForBars(String color){
         return "-fx-background-color: #392467; " + // Background color
-               "-fx-accent: " + color + "; " + // Progress color
-               "-fx-text-box-border: #392467; " + // Border color
-               "-fx-control-inner-background: #FFFFEC; " + // Background color of the progress bar itself
-               "-fx-border-width: 1px; " + // Border width
-               "-fx-border-radius: 0px; " + // Border radius
-               "-fx-padding: 1px;"; // Padding
+                "-fx-accent: " + color + "; " + // Progress color
+                "-fx-text-box-border: #392467; " + // Border color
+                "-fx-control-inner-background: #FFFFEC; " + // Background color of the progress bar itself
+                "-fx-border-width: 1px; " + // Border width
+                "-fx-border-radius: 0px; " + // Border radius
+                "-fx-padding: 1px;"; // Padding
     }
 
     public ChallengeGUI(Controller controller, ControllerGUI controllerGUI){
@@ -134,7 +134,7 @@ public class ChallengeGUI extends BaseGUI {
                 center.getChildren().remove(center.getChildren().size() - 1);
             }
             simulator = new ChallengeControl(controller, healthBars, selectedOption, labelsPopulation);
-            LineChart<Number, Number> lineChart =  simulator.createChart();
+            LineChart<String, Number> lineChart =  simulator.createChart();
             firstChart = false;
             for(Label label : labelsPopulation)
                 label.setText(String.valueOf(simulator.getInitialNumber()));
@@ -148,6 +148,6 @@ public class ChallengeGUI extends BaseGUI {
 
         root.setCenter(center);
 
-        return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
+        return new Scene(root, winWidth, winHeight);
     }
 }
