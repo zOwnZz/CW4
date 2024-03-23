@@ -6,3 +6,30 @@
     cursor: pointer;
 }
 
+.root {
+    -fx-background-color: #FFE6E6;
+}
+#topBox {
+    -fx-background-color: #D37676;
+}
+
+
+.button {
+    -fx-background-color: transparent; /* Set background color to transparent */
+    -fx-border-color: transparent; /* Set border color to transparent */
+    -fx-text-fill: black; /* Set text color */
+}
+.button:hover {
+    -fx-background-color: #FFE6E6;
+}
+#submitButton {
+    -fx-cursor: hand;
+    -fx-background-color: #FFE6E6;
+    -fx-text-fill: #D37676;
+    -fx-effect: dropshadow(two-pass-box, #FFFFFF, 0, 0, 1, 1);
+    -fx-font-family: 'Segoe UI Semibold';
+}
+
+#submitButton:pressed {
+    -fx-effect: innershadow(two-pass-box , white , 0, 0, -1, -1)
+}
