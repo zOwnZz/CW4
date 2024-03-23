@@ -16,23 +16,23 @@ import javafx.scene.image.Image;
  * MapGUI creates the GUI for the map page of the COVID DATA program
  *
  */
-public class MapGUI extends BaseGUI {   
+public class MapGUI extends BaseGUI {
     private Controller controller;
-    private ArrayList<Button> boroughButtons = new ArrayList<Button>();
+    private ArrayList<Button> boroughButtons = new ArrayList<>();
     private String[] boroughs = {
-        "ENFI", "BARN", "HRGY", "WALT", "HRRW", "BREN", "CAMD", "ISLI", "HACK", "REDB", "HAVE",
-        "HILL", "EALI", "KENS", "WEST", "TOWH", "NEWH", "BARK", "HOUN", "HAMM", "WAND", "CITY",
-        "GWCH", "BEXL", "RICH", "MERT", "LAMB", "STHW", "LEWS", "KING", "SUTT", "CROY", "BROM"
-        };
+            "ENFI", "BARN", "HRGY", "WALT", "HRRW", "BREN", "CAMD", "ISLI", "HACK", "REDB", "HAVE",
+            "HILL", "EALI", "KENS", "WEST", "TOWH", "NEWH", "BARK", "HOUN", "HAMM", "WAND", "CITY",
+            "GWCH", "BEXL", "RICH", "MERT", "LAMB", "STHW", "LEWS", "KING", "SUTT", "CROY", "BROM"
+    };
     private String[] boroughsFull = {
-        "Enfield", "Barnet", "Haringey", "Waltham Forest", "Harrow", "Brent", "Camden", "Islington", "Hackney", "Redbridge", "Havering",
-        "Hillingdon", "Ealing", "Kensington And Chelsea", "Westminster", "Tower Hamlets", "Newham", "Barking", "Hounslow", "Hammersmith And Fulham", "Wandsworth", "City Of London",
-        "Greenwich", "Bexley", "Richmond", "Merton", "Lambeth", "Southwark", "Lewisham", "Kingston Upon Thames", "Sutton", "Croydon", "Bromley"
-        };
-    
+            "Enfield", "Barnet", "Haringey", "Waltham Forest", "Harrow", "Brent", "Camden", "Islington", "Hackney", "Redbridge", "Havering",
+            "Hillingdon", "Ealing", "Kensington And Chelsea", "Westminster", "Tower Hamlets", "Newham", "Barking", "Hounslow", "Hammersmith And Fulham", "Wandsworth", "City Of London",
+            "Greenwich", "Bexley", "Richmond", "Merton", "Lambeth", "Southwark", "Lewisham", "Kingston Upon Thames", "Sutton", "Croydon", "Bromley"
+    };
+
     /**
      * Constructor for objects of class MapGui
-     */ 
+     */
     public MapGUI(Controller controller, ControllerGUI controllerGUI){
         super(controller, controllerGUI);
         this.controller = controller;
@@ -45,15 +45,15 @@ public class MapGUI extends BaseGUI {
      */
     public Scene getScene (){
         BorderPane root = getRoot();
-        
+
         //Map
         Pane map = new Pane();
         //Specific coordinates to place buttons in the right position in the pane
         int yCord = 0;
         int xCord = 0;
         map.getStylesheets().add("style.CSS");//add hover effect over the buttons
-        
-        //create the hexagonal shape of the buttons 
+
+        //create the hexagonal shape of the buttons
         SVGPath hexagon = new SVGPath();
         hexagon.setContent("M 0.0 -50 L 43 -25 L 43 25 L 6e-15 50 L -43 25 L -43 -25 Z");
         for (int i = 0; i < boroughs.length; i++) {
@@ -67,7 +67,7 @@ public class MapGUI extends BaseGUI {
                 boroughButtons.add(button);
             }
         }
-        
+
         //places the buttons in their respective places in the pane to reperensent a geographically accurate map
         for (Button b : boroughButtons) {
             int index = boroughButtons.indexOf(b);
@@ -77,34 +77,34 @@ public class MapGUI extends BaseGUI {
             }else if(index < 4){
                 yCord = 112;
                 if(index == 1){
-                 xCord = 380;
+                    xCord = 380;
                 }
             }else if(index < 11){
                 yCord = 184;
                 if(index == 4){
-                  xCord = 254;
+                    xCord = 254;
                 }
             }else if(index < 18){
                 yCord = 256;
                 if(index == 11){
-                  xCord = 212;
+                    xCord = 212;
                 }
             }else if(index < 24){
-                yCord = 328; 
+                yCord = 328;
                 if(index == 18){
-                  xCord = 254;
+                    xCord = 254;
                 }
             }else if(index < 29){
                 yCord = 400;
                 if(index == 24){
-                  xCord = 296;
-                } 
+                    xCord = 296;
+                }
             }else{
                 yCord = 472;
                 if(index == 29){
-                  xCord = 338;
-                }  
-            }  
+                    xCord = 338;
+                }
+            }
 
             b.setLayoutX(xCord); // Set X coordinate for the button
             b.setLayoutY(yCord); // Set Y coordinate for the button
@@ -129,12 +129,12 @@ public class MapGUI extends BaseGUI {
             legend.getChildren().add(square);
         }
         legend.getChildren().add(mostDeathsLbl);
-        
+
         //adding all the elements to the scene
         root.setLeft(legend);
         root.setCenter(map);
         deathVisuals();
-        return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
+        return new Scene(root, winWidth, winHeight);
     }
 
     /**
@@ -157,7 +157,7 @@ public class MapGUI extends BaseGUI {
     /**
      * An example of a method - replace this comment with your own
      *
-     * @param  String of the borough thats been clicked
+     * @param  borough of the borough thats been clicked
      */
     private void infoWindow(String borough){
         //make a hashmap connecting the borough code on the button to the full borough name in the data
@@ -189,18 +189,18 @@ public class MapGUI extends BaseGUI {
         root2.getChildren().add(hbox);
         root2.getChildren().add(table);
         stage.setTitle(fName);
-        stage.getIcons().add(new Image("Coronavirus._SARS-CoV-2.png"));
+        //stage.getIcons().add(new Image("Coronavirus._SARS-CoV-2.png"));
         stage.setScene(scene);
         stage.show();
 
         //name of attributes of the object type CovidData
         String[] attributeNames = {
-            "date", "retailRecreationGMR", "groceryPharmacyGMR", "parksGMR", "transitGMR", 
-            "workplacesGMR","residentialGMR", "newCases", "totalCases", "newDeaths", "totalDeaths",
+                "date", "retailRecreationGMR", "groceryPharmacyGMR", "parksGMR", "transitGMR",
+                "workplacesGMR","residentialGMR", "newCases", "totalCases", "newDeaths", "totalDeaths",
         };
         String[] columns = {
-            "Date", "Retail/Recreation GMR", "Grocery/Pharmacy GMR", "Parks GMR", "Transit GMR", 
-            "Workplaces GMR","Residential GMR", "New Cases", "Total Cases", "New Deaths", "Total Deaths",
+                "Date", "Retail/Recreation GMR", "Grocery/Pharmacy GMR", "Parks GMR", "Transit GMR",
+                "Workplaces GMR","Residential GMR", "New Cases", "Total Cases", "New Deaths", "Total Deaths",
         };
 
         HashMap<String, TableColumn<CovidData, String>> columnsLink = new HashMap<>();
@@ -214,7 +214,7 @@ public class MapGUI extends BaseGUI {
             columnsLink.put(columns[i],column);
             table.getColumns().add(column);
         }
-                
+
         //add data to the table
         ArrayList<CovidData> boroughData = new ArrayList<>();
         for (String key : info.keySet()) {
@@ -281,7 +281,7 @@ public class MapGUI extends BaseGUI {
             }
             deaths.add(totalDeaths);
         }
-        
+
         int minValue2 = Collections.min(deaths);
         int maxValue2 = Collections.max(deaths);
         maxValue2 = maxValue2 - minValue2;
@@ -298,9 +298,7 @@ public class MapGUI extends BaseGUI {
             else{
                 boroughButtons.get(i).setStyle("-fx-background-color: rgba(255, 0, 0," + String.valueOf(opacity) + ")");
             }
-            
+
         }
     }
 }
-
-
