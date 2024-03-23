@@ -1,41 +1,38 @@
 import javafx.application.Platform;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.chart.XYChart;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 import javafx.scene.chart.LineChart;
 
 public class ChallengeControl {
 
     private Controller controller;
-    private final int initialNumber = 1000;
-    private int retAndRecPeople;
-    private int grocAndPhaPeople;
-    private int parksPeople;
-    private int transitPeople;
-    private int workplacePeople;
-    private int residentialPeople;
-    private ArrayList<Integer> people;
+    private final double initialNumber = 100;
     private ArrayList<ProgressBar> healthBars;
     private String borough;
     private ArrayList<CovidData> data;
     private Boolean runningSimulation = false;
     ArrayList<Label> labelBars;
-    private XYChart.Series<Number, Number> newInfected;
-    private XYChart.Series<Number, Number> newDeaths;
+    private XYChart.Series<String, Number> newInfected;
+    private XYChart.Series<String, Number> newDeaths;
     private int lastIndex;
+    ArrayList<Double> people;
 
     public ChallengeControl(Controller controller, ArrayList<ProgressBar> bars, String borough, ArrayList<Label> labelBars){
-        people = new ArrayList<>(Arrays.asList(retAndRecPeople, grocAndPhaPeople, parksPeople, transitPeople, workplacePeople, residentialPeople));
+//        people = new ArrayList<>(Arrays.asList(retAndRecPeople, grocAndPhaPeople, parksPeople, transitPeople, workplacePeople, residentialPeople));
+        people = new ArrayList<>();
+        for(int i = 0; i < 6; i++){
+            people.add(initialNumber);
+        }
         this.controller = controller;
         this.healthBars = bars;
         this.borough = borough;
         data = sorter(controller.boroughAndData().get(borough));
-        Collections.fill(people, initialNumber);
+//        Collections.fill(people, initialNumber);
         this.labelBars = labelBars;
         lastIndex = 0;
     }
@@ -46,11 +43,11 @@ public class ChallengeControl {
         return sorted;
     }
 
-    public LineChart<Number, Number> createChart(){
-        NumberAxis xAxis = new NumberAxis();
+    public LineChart<String, Number> createChart(){
+        CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
 
-        LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
         lineChart.setPrefSize(200, 250);
 
         newDeaths = new XYChart.Series<>();
@@ -66,18 +63,6 @@ public class ChallengeControl {
         return lineChart;
     }
 
-    private int getNumberPercent(int percent, int number) {
-        return number + (number * percent / 1000);
-    }
-
-    private int getTotalNumberOfPeople(){
-        int total = 0;
-        for(int population : people){
-            total += population;
-        }
-        return total;
-    }
-
     public void disableSimulation(){
         runningSimulation = false;
     }
@@ -87,30 +72,32 @@ public class ChallengeControl {
         new Thread(() -> {
             int i = lastIndex; // Current object in arrayList
             while(runningSimulation && data.size() > i){
-                people.set(0, getNumberPercent(data.get(i).getGroceryPharmacyGMR(), people.get(0)));
-                people.set(1, getNumberPercent(data.get(i).getRetailRecreationGMR(), people.get(1)));
-                people.set(2, getNumberPercent(data.get(i).getParksGMR(), people.get(2)));
-                people.set(3, getNumberPercent(data.get(i).getTransitGMR(), people.get(3)));
-                people.set(4, getNumberPercent(data.get(i).getWorkplacesGMR(), people.get(4)));
-                people.set(5, getNumberPercent(data.get(i).getResidentialGMR(), people.get(5)));
+                if(i >= 364){
+                    runningSimulation = false;
+                }
+
+                people.set(0, calculatePeople(data.get(i).getGroceryPharmacyGMR()));
+                people.set(1, calculatePeople(data.get(i).getRetailRecreationGMR()));
+                people.set(2, calculatePeople(data.get(i).getParksGMR()));
+                people.set(3, calculatePeople(data.get(i).getTransitGMR()));
+                people.set(4, calculatePeople(data.get(i).getWorkplacesGMR()));
+                people.set(5, calculatePeople(data.get(i).getResidentialGMR()));
+
+                double sum = people.stream().reduce((double) 0, Double::sum);
 
 
-                int currentTotal = 0;
-                for(int population : people){
-                    currentTotal += population;
-                }
-                for(int y = 0; y < people.size(); y++){
-                    people.set(y, people.get(y) * initialNumber * people.size() / currentTotal);
-                    healthBars.get(y).setProgress(Math.min(((double) people.get(y) / (double) getTotalNumberOfPeople()), 1));
-                }
+
 
                 final int currentIndex = i;
                 Platform.runLater(() -> {
                     for (int x = 0; x < people.size(); x++) {
-                        labelBars.get(x).setText(String.valueOf(people.get(x)));
+                        labelBars.get(x).setText(String.valueOf(Math.round(people.get(x))));
                     }
-                    newInfected.getData().add(new XYChart.Data<>( currentIndex, data.get(currentIndex).getNewCases()));
-                    newDeaths.getData().add(new XYChart.Data<>( currentIndex, data.get(currentIndex).getNewDeaths()));
+                    for(int x = 0; x < 6; x++){
+                        healthBars.get(x).setProgress(people.get(x) / sum);
+                    }
+                    newInfected.getData().add(new XYChart.Data<>(data.get(currentIndex).getDateFormat().getDayOfMonth() +"/"+ data.get(currentIndex).getDateFormat().getMonthValue(), data.get(currentIndex).getNewCases()));
+                    newDeaths.getData().add(new XYChart.Data<>( data.get(currentIndex).getDateFormat().getDayOfMonth() +"/"+ data.get(currentIndex).getDateFormat().getMonthValue(), data.get(currentIndex).getNewDeaths()));
                     newInfected.getNode().setStyle("-fx-stroke: red;");
                     newDeaths.getNode().setStyle("-fx-stroke: black;");
                 });
@@ -125,8 +112,12 @@ public class ChallengeControl {
 
         }).start();
     }
+    private double calculatePeople(int percent){
+        System.out.println(""+(initialNumber + initialNumber * percent * 0.01));
+        return initialNumber + initialNumber * percent * 0.01;
+    }
 
-    public int getInitialNumber(){
+    public double getInitialNumber(){
         return initialNumber;
     }
     public void stopSimulation(){
