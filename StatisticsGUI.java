@@ -6,12 +6,24 @@ import javafx.scene.text.Text;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.layout.Pane;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
+import javafx.scene.layout.StackPane;
+import javafx.animation.TranslateTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.PauseTransition;
+import java.util.HashMap;
+import java.util.ArrayList;
+
+
 
 public class StatisticsGUI extends BaseGUI {
     private Controller controller;
     private Text statLabel;
     private int currentStatIndex = 0;
     private String[] statistics = new String[4];
+    boolean coolingOff = false;
 
     public StatisticsGUI(Controller controller, ControllerGUI controllerGUI){
         super(controller, controllerGUI);
@@ -20,58 +32,107 @@ public class StatisticsGUI extends BaseGUI {
     }
 
     private void populateStatistics() {
+    HashMap<String, ArrayList<CovidData>> boroughData = controller.boroughAndData();
 
-        statistics[0] = "Average Parks GMR: " + controller.calculateAverageParksGMR();
-        statistics[1] = "Average Transit GMR: " + controller.calculateAverageTransitGMR();
-        statistics[2] = "Total Deaths: " + controller.calculateTotalDeaths();
-        statistics[3] = "Average Total Cases: " + controller.calculateAverageTotalCases();
+    statistics[0] = "Average Parks GMR: " + controller.calculateAverageParksGMR(boroughData);
+    statistics[1] = "Average Transit GMR: " + controller.calculateAverageTransitGMR(boroughData);
+    statistics[2] = "Total Deaths: " + controller.calculateTotalDeaths(boroughData);
+    statistics[3] = "Average Total Cases: " + controller.calculateAverageTotalCases(boroughData);
     }
 
     @Override
     public Scene getScene() {
-    BorderPane root = getRoot();
+        BorderPane root = getRoot();
 
-    statLabel = new Text(statistics[currentStatIndex]); 
-    statLabel.setWrappingWidth(200); 
-    statLabel.setTextAlignment(TextAlignment.CENTER); 
+        statLabel = new Text(statistics[currentStatIndex]); // Default to the first statistic
+        statLabel.setWrappingWidth(200); // Sets the wrapping width to a fixed value
+        statLabel.setTextAlignment(TextAlignment.CENTER); // Ensure the text is centered
 
-    Button backButton = new Button("<");
-    backButton.setOnAction(e -> {
-        currentStatIndex = (currentStatIndex - 1 + statistics.length) % statistics.length;
-        updateStatLabel();
-    });
+        Button backButton = new Button("<");
+        backButton.setOnAction(e -> {
+            if(!coolingOff) { 
+                currentStatIndex = (currentStatIndex - 1 + statistics.length) % statistics.length;
+                transitionBackward(); 
 
-    Button forwardButton = new Button(">");
-    forwardButton.setOnAction(e -> {
-        currentStatIndex = (currentStatIndex + 1) % statistics.length;
-        updateStatLabel();
-    }); 
+                backButton.setDisable(true);
+                coolingOff = true;
 
-    
-    HBox backButtonBox = new HBox(backButton);
-    backButtonBox.setAlignment(Pos.CENTER_LEFT);
+                PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+                pause.setOnFinished(f -> { 
+                    backButton.setDisable(false); 
+                    coolingOff = false;
+                });
 
-    HBox statLabelBox = new HBox(statLabel);
-    statLabelBox.setAlignment(Pos.CENTER);
+                pause.play();
+            }
+        });
 
-    HBox forwardButtonBox = new HBox(forwardButton);
-    forwardButtonBox.setAlignment(Pos.CENTER_RIGHT);
+        Button forwardButton = new Button(">");
+        forwardButton.setOnAction(e -> {
+            if(!coolingOff) { 
+                currentStatIndex = (currentStatIndex + 1) % statistics.length;
+                transitionForward();
+                
+                forwardButton.setDisable(true);
+                coolingOff = true;
 
+                PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+                pause.setOnFinished(f -> { 
+                    forwardButton.setDisable(false); 
+                    coolingOff = false;
+                });
 
-    HBox navigationBox = new HBox(backButtonBox, statLabelBox, forwardButtonBox);
-    navigationBox.setAlignment(Pos.CENTER);
-    navigationBox.setSpacing(10); 
+                pause.play();
+            }
+        }); 
 
-    root.setCenter(navigationBox);
+        // Combine navigation buttons and stat display into a single HBox
+        HBox navigationBox = new HBox(10, backButton, statLabel, forwardButton); // Simplified the setup
+        navigationBox.setAlignment(Pos.CENTER);
 
-    return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
+        root.setCenter(navigationBox);
+
+        return new Scene(root, WIN_WIDTH, WIN_HEIGHT);
     }
 
-    private void updateStatLabel() {
-        statLabel.setText(statistics[currentStatIndex]);
-        statLabel.setWrappingWidth(200); 
-        statLabel.setTextAlignment(TextAlignment.CENTER); 
-
+    private void transitionForward() {
+        // Execute transition: Move current text to the right and fade out, then bring new text from the left
+        executeTransition(75, -75);
     }
 
+    private void transitionBackward() {
+        // Execute transition: Move current text to the left and fade out, then bring new text from the right
+        executeTransition(-75, 75);
+    }
+
+    private void executeTransition(double moveOutByX, double moveInByX) {
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(250), statLabel);
+        fadeOut.setToValue(0);
+
+        TranslateTransition moveOut = new TranslateTransition(Duration.millis(250), statLabel);
+        moveOut.setByX(moveOutByX);
+
+        ParallelTransition fadeAndMoveOut = new ParallelTransition(statLabel, fadeOut, moveOut);
+        fadeAndMoveOut.setOnFinished(e -> {
+            // Once the fade out and move are complete, update the text and reset position
+            statLabel.setText(statistics[currentStatIndex]);
+            statLabel.setOpacity(0); // Make the label invisible as it resets to start position
+            statLabel.setTranslateX(moveInByX); // Position the label at the starting point of the incoming animation
+
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(250), statLabel);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+
+            TranslateTransition moveIn = new TranslateTransition(Duration.millis(250), statLabel);
+            moveIn.setByX(-moveInByX); // Move the label back to its central position
+
+            ParallelTransition fadeInWithMoveIn = new ParallelTransition(statLabel, fadeIn, moveIn);
+            fadeInWithMoveIn.play();
+        });
+
+        fadeAndMoveOut.play();
+    }
 }
+
+
+
