@@ -1,35 +1,53 @@
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
-
 import java.time.LocalDate;
-import javafx.scene.layout.HBox;
+
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.DateCell;
+
+
 
 public class BaseGUI {
 
+    // -------------- Attributes --------------
 
-    protected int WIN_WIDTH = 1000;
-    protected int WIN_HEIGHT = 600;
+    protected double winWidth = 1000;
+    protected double winHeight = 750;
     private Controller controller;
-    private LocalDate minDate, maxDate, startDate, endDate;
+    private LocalDate minDate, maxDate;
     private DatePicker startDatePicker, endDatePicker;
     private ControllerGUI controllerGUI;
+    private final HBox buttons = new HBox();
 
+    // -------------- Constructors and initializer --------------
 
     public BaseGUI(Controller controller, ControllerGUI controllerGUI){
+        init(controller, controllerGUI);
+        winHeight = controllerGUI.getStageHeight();
+        winWidth = controllerGUI.getStageWidth();
+    }
+    public BaseGUI(Controller controller, ControllerGUI controllerGUI, Boolean ifFirst){
+        init(controller, controllerGUI);
+    }
+
+    private void init(Controller controller, ControllerGUI controllerGUI){
         this.controller = controller;
         this.controllerGUI = controllerGUI;
-        minDate = controller.getMinDate();
-        maxDate = controller.getMaxDate();
+        minDate = controller.getMinDateCalculated();
+        maxDate = controller.getMaxDateCalculated();
+        setButtonsSpacing(controllerGUI.getStageWidth());
     }
+
+    // -------------- Getters and setters --------------
 
     /**
      * Method that returns a scene. Should be overriden in each GUI class
      */
     public Scene getScene(){
-        return new Scene(new VBox(), WIN_WIDTH, WIN_HEIGHT);
+        return new Scene(new VBox(), winWidth, winHeight);
     };
 
     /**
@@ -38,19 +56,16 @@ public class BaseGUI {
     protected BorderPane getRoot(){
         BorderPane root = new BorderPane();
 
-        root.setBottom(buttons());
-        root.setTop(menuTab());
+        root.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
+        root.setBottom(getButtons());
+        root.setTop(getMenuTab());
 
         return root;
     }
 
-    private HBox buttons() {
-        HBox buttons = new HBox();
-
+    private HBox getButtons() {
         Button nextButton = new Button(">");
         Button backButton = new Button("<");
-        // Make win width dynamic, to be resizable
-        buttons.setSpacing(WIN_WIDTH-50);
 
         backButton.setOnAction(event -> controllerGUI.changeScene(false));
 
@@ -65,16 +80,31 @@ public class BaseGUI {
         }
 
         buttons.getChildren().addAll(backButton, nextButton);
+
+        backButton.setAlignment(Pos.BOTTOM_LEFT);
+        nextButton.setAlignment(Pos.BOTTOM_RIGHT);
+        buttons.setAlignment(Pos.CENTER);
+        buttons.setPadding(new Insets(10, 10, 10, 10));
+        //buttons.setStyle("-fx-background-color: #06D8AD;");
+        buttons.setId("topBox");
+        buttons.setPrefHeight(65);
+
+        BorderPane.setMargin(buttons, new javafx.geometry.Insets(10));
+
         return buttons;
     }
 
-    private HBox menuTab(){
+    private HBox getMenuTab(){
         HBox menuTab = new HBox();
 
         startDatePicker = new DatePicker();
         startDatePicker.setEditable(false);
+
         endDatePicker = new DatePicker();
         endDatePicker.setEditable(false);
+
+        menuTab.setId("topBox");
+        menuTab.setPrefHeight(65);
 
         endDatePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
@@ -92,15 +122,38 @@ public class BaseGUI {
             }
         });
 
+        startDatePicker.setValue(controller.getStartDate());
+        endDatePicker.setValue(controller.getEndDate());
+
         Button submitButton = new Button("Submit!");
         submitButton.setOnAction(event -> submitDate());
 
+        Label Title = new Label("Covid-19 in London");
+        Label fromLabel = new Label("From :");
+        Label toLabel = new Label("To :");
         startDatePicker.setValue(minDate);
         endDatePicker.setValue(maxDate);
-        menuTab.getChildren().addAll(startDatePicker, endDatePicker, submitButton);
+        Region gapRegion = new Region();
+        gapRegion.setPrefWidth(250);
+        menuTab.setSpacing(10);
+
+        menuTab.getChildren().addAll(Title, gapRegion, fromLabel, startDatePicker, toLabel, endDatePicker, submitButton);
+
+        menuTab.setAlignment(Pos.CENTER_RIGHT);
+        BorderPane.setMargin(menuTab, new javafx.geometry.Insets(10, 40, 10, 10));
+        //menuTab.setSpacing(15);
+        //menuTab.setStyle("-fx-background-color: #f0f0ff;");
+        menuTab.setPadding(new javafx.geometry.Insets(15));
 
         return menuTab;
     }
+
+    public void setButtonsSpacing(double spacing){
+        double BUTTONS_SPACING = 200;
+        buttons.setSpacing(spacing - BUTTONS_SPACING);
+    }
+
+    // -------------- Auxiliary methods --------------
 
     public void submitDate(){
         controller.updateData(selectedDates());
@@ -109,18 +162,17 @@ public class BaseGUI {
     }
 
     public LocalDate[] selectedDates() {
-        startDate = startDatePicker.getValue();
-        endDate = endDatePicker.getValue();
+        LocalDate startDate = startDatePicker.getValue();
+        LocalDate endDate = endDatePicker.getValue();
 
         if (!validateDates(startDate, endDate)) {
-            
-            System.out.println("wrong dates chosen");
-            Alert alert = new Alert(AlertType.ERROR);
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error---Invalid Dates Selected");
             alert.setHeaderText(null);
             alert.setContentText("Invalid Dates Selected\n Try Again");
             alert.showAndWait();
-            
+
 
             startDatePicker.setValue(null);
             endDatePicker.setValue(null);
@@ -134,7 +186,7 @@ public class BaseGUI {
             return false;
         }
 
-        return startDate.isBefore(endDate) && endDate.isBefore(maxDate) && startDate.isAfter(minDate);
+        return startDate.isBefore(endDate) && endDate.minusDays(1).isBefore(maxDate) && startDate.plusDays(1).isAfter(minDate);
     }
 
 }
