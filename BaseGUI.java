@@ -63,7 +63,7 @@ public class BaseGUI {
      */
     public Scene getScene(){
         return new Scene(new VBox(), winWidth, winHeight);
-    };
+    }
 
     /**
      * The basic border pane containing upper menu tab and buttons at the bottom
@@ -107,7 +107,7 @@ public class BaseGUI {
         backButton.setAlignment(Pos.BOTTOM_LEFT);
         nextButton.setAlignment(Pos.BOTTOM_RIGHT);
         buttons.setAlignment(Pos.CENTER);
-        buttons.setPadding(new Insets(10, 10, 10, 10));;
+        buttons.setPadding(new Insets(10, 10, 10, 10));
         buttons.setId("topBox");
         buttons.setPrefHeight(65);
         BorderPane.setMargin(buttons, new javafx.geometry.Insets(10));
@@ -201,7 +201,7 @@ public class BaseGUI {
         LocalDate endDate = endDatePicker.getValue();
 
         if (!validateDates(startDate, endDate)) {
-            
+
             // Show alert if dates ranges are wrong
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error---Invalid Dates Selected");
