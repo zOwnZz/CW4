@@ -30,7 +30,7 @@ public class ControllerGUI extends Application {
 
     /**
      * Changes the scene according to the button which was clicked
-     * @param ifPositive if the next panel or previous panel button was clicked
+     * @param ifPositive if the next or previous button was clicked
      */
     public void changeScene(Boolean ifPositive){
         double width = primaryStage.getWidth();
@@ -39,12 +39,15 @@ public class ControllerGUI extends Application {
     }
 
     /**
-     * Open the current scene again, so that all new data is fetched
+     * Open the current scene again, so that all new data is fetched.
+     * Save the size of the window and set it after reloading.
      */
     public void reloadScene(){
         double width = primaryStage.getWidth();
         double height = primaryStage.getHeight();
+
         setScene(counter);
+
         primaryStage.setWidth(width);
         primaryStage.setHeight(height);
     }
@@ -67,7 +70,12 @@ public class ControllerGUI extends Application {
         return counter;
     }
 
+    /**
+     * Depending on the provided parameters show the appropriate scene.
+     * @param nextCounterInt the index of the panel to load.
+     */
     private void setScene(int nextCounterInt){
+        // In each case create a new objects of GUI class, set the listener for changes in width, set scene and title
         switch (nextCounterInt){
             case 0:
                 BaseGUI welcome2 = new WelcomeGUI(controller, this);
@@ -98,16 +106,30 @@ public class ControllerGUI extends Application {
 
     // -------------- Getters and Setters --------------
 
+    /**
+     * Set if the buttons to switch panel are available
+     */
     public void setIfAvailableTrue(){
         ifAvailable = true;
     }
+
+    /**
+     * @return if buttons to switch panels should be available
+     */
     public Boolean getIfAvailable(){
         return ifAvailable;
     }
 
+    /**
+     * @return the current width of the window
+     */
     public double getStageWidth(){
         return primaryStage.getWidth();
     }
+
+    /**
+     * @return the current height of the window
+     */
     public double getStageHeight(){
         return primaryStage.getHeight();
     }
