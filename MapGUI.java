@@ -180,13 +180,7 @@ public class MapGUI extends BaseGUI {
 
         //present the new window
         table.setMinSize(1000, 500);
-
-        //sort by date by default
-        sortComboBox.setValue("Date"); 
-        table.getSortOrder().clear();
-        table.getSortOrder().add(columnsLink.get(selectedColumn));
-        table.sort();
-
+        sortComboBox.setValue("Date"); //date default value for combo box
         hbox.setPadding(new Insets(0, 0, 0, 10)); // Top, Right, Bottom, Left padding
         hbox.setSpacing(10);
         boroughLbl.setStyle("-fx-font-size: 10pt;");
@@ -241,6 +235,10 @@ public class MapGUI extends BaseGUI {
             table.getSortOrder().add(columnsLink.get(selectedColumn));
             table.sort();
         });
+
+        table.getSortOrder().clear();
+        table.getSortOrder().add(columnsLink.get("Date"));
+        table.sort();
     }
 
     /**
