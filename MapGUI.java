@@ -180,7 +180,13 @@ public class MapGUI extends BaseGUI {
 
         //present the new window
         table.setMinSize(1000, 500);
-        sortComboBox.setValue("Date"); // Set default value
+
+        //sort by date by default
+        sortComboBox.setValue("Date"); 
+        table.getSortOrder().clear();
+        table.getSortOrder().add(columnsLink.get(selectedColumn));
+        table.sort();
+
         hbox.setPadding(new Insets(0, 0, 0, 10)); // Top, Right, Bottom, Left padding
         hbox.setSpacing(10);
         boroughLbl.setStyle("-fx-font-size: 10pt;");
