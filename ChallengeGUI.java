@@ -13,46 +13,48 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-
 public class ChallengeGUI extends BaseGUI {
-    private Controller controller;
     private ChallengeControl simulator;
     private Boolean firstChart;
-    private String cssForBars(String color){
-        return "-fx-background-color: #392467; " + // Background color
-                "-fx-accent: " + color + "; " + // Progress color
-                "-fx-text-box-border: #392467; " + // Border color
-                "-fx-control-inner-background: #FFFFEC; " + // Background color of the progress bar itself
-                "-fx-border-width: 1px; " + // Border width
-                "-fx-border-radius: 0px; " + // Border radius
-                "-fx-padding: 1px;"; // Padding
-    }
 
+    /**
+     * Constructor assigning all the neccessary variables
+     * @param controller keeps and manages data
+     * @param controllerGUI keeps track of creating and changing scenes
+     */
     public ChallengeGUI(Controller controller, ControllerGUI controllerGUI){
         super(controller, controllerGUI);
-        this.controller = controller;
     }
 
-
-
+    /**
+     * Create all the components in the scene and add it to the main root
+     * @return the challenge scene
+     */
     @Override
     public Scene getScene(){
         BorderPane root = getRoot();
 
+        // While creating a scene, there is no chart visible
         firstChart = true;
 
+        // Receive a data
         HashMap<String, ArrayList<CovidData>> boroughAndData = controller.boroughAndData();
 
+        // Create main components of the scene
         VBox center = new VBox();
         HBox boroughSelectionPane = new HBox();
         HBox simulationButtons = new HBox();
         HBox upperPane = new HBox();
 
+        // Create borough selector and start stop buttons
         ComboBox<String> selection = new ComboBox<>();
+        selection.getItems().addAll(boroughAndData.keySet());
         Label selectionText = new Label("Select borough: ");
+
         Button startSimulation = new Button("Play!");
         Button stopSimulation = new Button("Stop!");
 
+        // Set event to start and stop buttons
         startSimulation.setOnAction(event -> {
             simulator.playSimulation();
             startSimulation.setDisable(true);
@@ -62,17 +64,18 @@ public class ChallengeGUI extends BaseGUI {
             startSimulation.setDisable(false);
         });
 
-        selection.getItems().addAll(boroughAndData.keySet());
-
+        // Create the layout of components on the screen
         boroughSelectionPane.getChildren().addAll(selectionText, selection);
-        simulationButtons.getChildren().addAll(startSimulation, stopSimulation);
-        upperPane.getChildren().addAll(boroughSelectionPane, simulationButtons);
-
         boroughSelectionPane.setSpacing(20);
+
+        simulationButtons.getChildren().addAll(startSimulation, stopSimulation);
         simulationButtons.setSpacing(40);
+
+        upperPane.getChildren().addAll(boroughSelectionPane, simulationButtons);
         upperPane.setSpacing(50);
         upperPane.setAlignment(Pos.CENTER);
 
+        // Create main GUI components to handle progress bars
         VBox healthBarsPane = new VBox();
 
         HBox retAndRecPane = new HBox(new Label("Retail and recreation: "));
@@ -84,6 +87,7 @@ public class ChallengeGUI extends BaseGUI {
 
         ArrayList<HBox> healthBarsPanes = new ArrayList<>(Arrays.asList(retAndRecPane, grocAndPhaPane, parksPane, transitPane, workplacePane, residentialPane));
 
+        // Labels that show number of people at the end of progress bars
         Label retAndRecLabel = new Label("");
         Label grocAndPhaLabel = new Label("");
         Label parksLabel = new Label("");
@@ -93,6 +97,7 @@ public class ChallengeGUI extends BaseGUI {
 
         ArrayList<Label> labelsPopulation = new ArrayList<>(Arrays.asList(retAndRecLabel, grocAndPhaLabel, parksLabel, transitLabel, workplaceLabel, residentialLabel));
 
+        // Create progress bars for each category in GMR
         ProgressBar retAndRecBar = new ProgressBar(); retAndRecPane.getChildren().addAll(retAndRecBar, retAndRecLabel);
         ProgressBar grocAndPhaBar = new ProgressBar(); grocAndPhaPane.getChildren().addAll(grocAndPhaBar, grocAndPhaLabel);
         ProgressBar parksBar = new ProgressBar(); parksPane.getChildren().addAll(parksBar, parksLabel);
@@ -100,6 +105,7 @@ public class ChallengeGUI extends BaseGUI {
         ProgressBar workplaceBar = new ProgressBar(); workplacePane.getChildren().addAll(workplaceBar, workplaceLabel);
         ProgressBar residentialBar = new ProgressBar(); residentialPane.getChildren().addAll(residentialBar, residentialLabel);
 
+        // Set colors of each progress bar
         retAndRecBar.setStyle(cssForBars("#9195F6"));
         grocAndPhaBar.setStyle(cssForBars("#BFEA7C"));
         parksBar.setStyle(cssForBars("#416D19"));
@@ -109,12 +115,14 @@ public class ChallengeGUI extends BaseGUI {
 
         ArrayList<ProgressBar> healthBars = new ArrayList<>(Arrays.asList(retAndRecBar, grocAndPhaBar, parksBar, transitBar, workplaceBar, residentialBar));
 
+        // Style boxes with progress bars, labels and numbers
         for(HBox pane : healthBarsPanes){
             pane.setAlignment(Pos.CENTER);
             healthBarsPane.getChildren().addAll(pane);
             pane.setSpacing(10);
         }
 
+        // Style progress bars
         for(ProgressBar bar : healthBars){
             bar.setProgress((double) 1 /6);
             bar.setPrefWidth(600);
@@ -123,25 +131,36 @@ public class ChallengeGUI extends BaseGUI {
         healthBarsPane.setSpacing(10);
         healthBarsPane.setAlignment(Pos.CENTER);
 
+        // When the borough is selected, get ready to stat the simulation
         selection.setOnAction(event -> {
+            // Get the selected borough
             String selectedOption = selection.getSelectionModel().getSelectedItem();
+
+            // Set each bar to the default value
             for(ProgressBar bar : healthBars){
                 bar.setProgress((double) 1/6);
-                bar.setPrefWidth(600);
             }
+
+            // Remove the old chart if there is any (if it is not the first simulation in this scene
             if(!firstChart) {
                 simulator.disableSimulation();
-                center.getChildren().remove(center.getChildren().size() - 1);
+                center.getChildren().removeLast();
             }
+
+            // Create new simulation, get and set required values
             simulator = new ChallengeControl(controller, healthBars, selectedOption, labelsPopulation);
             LineChart<String, Number> lineChart =  simulator.createChart();
             firstChart = false;
+
+            // Set population label to be the same everywhere
             for(Label label : labelsPopulation)
                 label.setText(String.valueOf(simulator.getInitialNumber()));
+
             center.getChildren().add(lineChart);
             startSimulation.setDisable(false);
         });
 
+        // Fill the box and style it
         center.getChildren().addAll(upperPane, healthBarsPane);
         center.setAlignment(Pos.CENTER);
         center.setSpacing(15);
@@ -149,5 +168,20 @@ public class ChallengeGUI extends BaseGUI {
         root.setCenter(center);
 
         return new Scene(root, winWidth, winHeight);
+    }
+
+    /**
+     * Generating css styling text for buttons
+     * @param color the requested color of the button
+     * @return String being a css styling
+     */
+    private String cssForBars(String color){
+        return "-fx-background-color: #392467; " + // Background color
+                "-fx-accent: " + color + "; " + // Progress color
+                "-fx-text-box-border: #392467; " + // Border color
+                "-fx-control-inner-background: #FFFFEC; " + // Background color of the progress bar itself
+                "-fx-border-width: 1px; " + // Border width
+                "-fx-border-radius: 0px; " + // Border radius
+                "-fx-padding: 1px;"; // Padding
     }
 }
