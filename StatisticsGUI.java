@@ -34,10 +34,10 @@ public class StatisticsGUI extends BaseGUI {
     private void populateStatistics() {
         HashMap<String, ArrayList<CovidData>> boroughData = controller.boroughAndData();
 
-        statistics[0] = "Average Parks GMR: " + controller.calculateAverageParksGMR(boroughData);
-        statistics[1] = "Average Transit GMR: " + controller.calculateAverageTransitGMR(boroughData);
-        statistics[2] = "Total Deaths: " + controller.calculateTotalDeaths(boroughData);
-        statistics[3] = "Average Total Cases: " + controller.calculateAverageTotalCases(boroughData);
+        statistics[0] = "Total Deaths: " + controller.calculateTotalDeaths();
+        statistics[1] = "Average Total Cases: " + controller.calculateAverageTotalCases();
+        statistics[2] = "Average Parks GMR: " + controller.calculateAverageParksGMR();
+        statistics[3] = "Average Transit GMR: " + controller.calculateAverageTransitGMR();
     }
 
     @Override
