@@ -17,7 +17,7 @@ public class BaseGUI {
 
     protected double winWidth = 1000;
     protected double winHeight = 750;
-    private Controller controller;
+    protected Controller controller;
     private LocalDate minDate, maxDate;
     private DatePicker startDatePicker, endDatePicker;
     private ControllerGUI controllerGUI;
@@ -115,6 +115,10 @@ public class BaseGUI {
         return buttons;
     }
 
+    /**
+     * Create an upper menu for each scene, where user can choose and submit the data
+     * @return box with upper menu
+     */
     private HBox getMenuTab(){
         // Create and style the box
         HBox menuTab = new HBox();
@@ -155,8 +159,6 @@ public class BaseGUI {
         Label Title = new Label("Covid-19 in London");
         Label fromLabel = new Label("From :");
         Label toLabel = new Label("To :");
-        startDatePicker.setValue(minDate);
-        endDatePicker.setValue(maxDate);
         Region gapRegion = new Region();
         gapRegion.setPrefWidth(250);
         menuTab.setSpacing(10);
@@ -164,7 +166,7 @@ public class BaseGUI {
         // Add all the components to the box and style it
         menuTab.getChildren().addAll(Title, gapRegion, fromLabel, startDatePicker, toLabel, endDatePicker, submitButton);
         menuTab.setAlignment(Pos.CENTER_RIGHT);
-        BorderPane.setMargin(menuTab, new javafx.geometry.Insets(10, 40, 10, 10));
+        BorderPane.setMargin(menuTab, new javafx.geometry.Insets(15));
         menuTab.setPadding(new javafx.geometry.Insets(15));
 
         return menuTab;
@@ -227,7 +229,7 @@ public class BaseGUI {
         if (startDate == null || endDate == null) {
             return false;
         }
-        return !startDate.isAfter(endDate) && !endDate.isBefore(minDate) && !startDate.isAfter(maxDate);
+        return startDate.minusDays(1).isBefore(endDate) && endDate.minusDays(1).isBefore(maxDate) && startDate.plusDays(1).isAfter(minDate);
     }
 
 }
