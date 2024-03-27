@@ -16,6 +16,8 @@ import java.util.HashMap;
 public class ChallengeGUI extends BaseGUI {
     private ChallengeControl simulator;
     private Boolean firstChart;
+    Button startSimulation = new Button("Play!");
+    Button stopSimulation = new Button("Stop!");
 
     /**
      * Constructor assigning all the neccessary variables
@@ -24,6 +26,7 @@ public class ChallengeGUI extends BaseGUI {
      */
     public ChallengeGUI(Controller controller, ControllerGUI controllerGUI){
         super(controller, controllerGUI);
+        disableButtons();
     }
 
     /**
@@ -50,9 +53,6 @@ public class ChallengeGUI extends BaseGUI {
         ComboBox<String> selection = new ComboBox<>();
         selection.getItems().addAll(boroughAndData.keySet());
         Label selectionText = new Label("Select borough: ");
-
-        Button startSimulation = new Button("Play!");
-        Button stopSimulation = new Button("Stop!");
 
         // Set event to start and stop buttons
         startSimulation.setOnAction(event -> {
@@ -136,6 +136,8 @@ public class ChallengeGUI extends BaseGUI {
             // Get the selected borough
             String selectedOption = selection.getSelectionModel().getSelectedItem();
 
+            enableButtons();
+
             // Set each bar to the default value
             for(ProgressBar bar : healthBars){
                 bar.setProgress((double) 1/6);
@@ -183,5 +185,14 @@ public class ChallengeGUI extends BaseGUI {
                 "-fx-border-width: 1px; " + // Border width
                 "-fx-border-radius: 0px; " + // Border radius
                 "-fx-padding: 1px;"; // Padding
+    }
+
+    public void disableButtons(){
+        startSimulation.setDisable(true);
+        stopSimulation.setDisable(true);
+    }
+    public void enableButtons(){
+        startSimulation.setDisable(false);
+        stopSimulation.setDisable(false);
     }
 }
