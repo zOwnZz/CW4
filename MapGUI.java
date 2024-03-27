@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Collections;
 import javafx.stage.Stage;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 
 /**
  * MapGUI creates the GUI for the map page of the COVID DATA program
@@ -235,7 +234,7 @@ public class MapGUI extends BaseGUI {
             table.getSortOrder().add(columnsLink.get(selectedColumn));
             table.sort();
         });
-
+        //sort by date initially when the window is opened
         table.getSortOrder().clear();
         table.getSortOrder().add(columnsLink.get("Date"));
         table.sort();
@@ -280,6 +279,10 @@ public class MapGUI extends BaseGUI {
                             minDeaths = i.getTotalDeaths();
                         }
                         totalDeaths = maxDeaths - minDeaths;
+                        //if a single date is selected, max and min deaths is the same, this ensures it doesnt affect the results negatively.
+                        if(totalDeaths == 0){
+                            totalDeaths = maxDeaths;
+                        }
                     }
                 }
             }
