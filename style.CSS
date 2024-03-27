@@ -33,3 +33,6 @@
 #submitButton:pressed {
     -fx-effect: innershadow(two-pass-box , white , 0, 0, -1, -1)
 }
+* {
+    font-family: 'GDS Transport', sans-serif;
+}
