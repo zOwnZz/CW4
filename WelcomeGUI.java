@@ -7,7 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.Region;
 
 public class WelcomeGUI extends BaseGUI {
-    private Controller controller;
+    private final Controller controller;
     private Boolean ifFirst = true;
     /**
      * Constructor assigning all the neccessary variables
@@ -57,7 +57,7 @@ public class WelcomeGUI extends BaseGUI {
         center.getChildren().addAll(welcomeLabel, gapRegion, infoLabel, info2Label,info3Label, enjoyLabel, noDateLabel);
 
         //User is told what date range they have selected after clicking submit
-        if (ifFirst == false) {
+        if (!ifFirst) {
             center.getChildren().remove(noDateLabel);
             center.getChildren().add(dateLabel);
         }
