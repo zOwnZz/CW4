@@ -198,12 +198,7 @@ public class BaseGUI {
         
     controller.updateData(selectedDates());
     controllerGUI.setIfAvailableTrue();
-    controllerGUI.reloadScene();
-        
-        
-
-        
-        
+    controllerGUI.reloadScene();  
     }
 
     /**
