@@ -13,7 +13,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 /**
  * MapGUI creates the GUI for the map page of the COVID DATA program
- *
  */
 public class MapGUI extends BaseGUI {
     private Controller controller;
@@ -25,8 +24,8 @@ public class MapGUI extends BaseGUI {
     };
     private String[] boroughsFull = {
             "Enfield", "Barnet", "Haringey", "Waltham Forest", "Harrow", "Brent", "Camden", "Islington", "Hackney", "Redbridge", "Havering",
-            "Hillingdon", "Ealing", "Kensington And Chelsea", "Westminster", "Tower Hamlets", "Newham", "Barking", "Hounslow", "Hammersmith And Fulham", "Wandsworth", "City Of London",
-            "Greenwich", "Bexley", "Richmond", "Merton", "Lambeth", "Southwark", "Lewisham", "Kingston Upon Thames", "Sutton", "Croydon", "Bromley"
+            "Hillingdon", "Ealing", "Kensington And Chelsea", "Westminster", "Tower Hamlets", "Newham", "Barking And Dagenham", "Hounslow", "Hammersmith And Fulham", "Wandsworth", "City Of London",
+            "Greenwich", "Bexley", "Richmond Upon Thames", "Merton", "Lambeth", "Southwark", "Lewisham", "Kingston Upon Thames", "Sutton", "Croydon", "Bromley"
     };
 
     /**
@@ -242,7 +241,6 @@ public class MapGUI extends BaseGUI {
 
     /**
      * Create the chloropleth map look to represent the number of deaths
-     *
      */
     private void deathVisuals(){
         //make a hashmap connecting the borough code on the button to the full borough name in the data
@@ -281,7 +279,7 @@ public class MapGUI extends BaseGUI {
                         totalDeaths = maxDeaths - minDeaths;
                         //if a single date is selected, max and min deaths is the same, this ensures it doesnt affect the results negatively.
                         if(totalDeaths == 0){
-                            totalDeaths = maxDeaths;
+                            totalDeaths = i.getNewDeaths();
                         }
                     }
                 }
