@@ -3,21 +3,18 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.text.TextAlignment;
-import javafx.scene.layout.Pane;
 import javafx.animation.FadeTransition;
 import javafx.util.Duration;
-import javafx.scene.layout.StackPane;
 import javafx.animation.TranslateTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
-import java.util.HashMap;
-import java.util.ArrayList;
 
-
-
+/**
+ * A GUI component that displays various statistics.
+ * It uses animations to transition between different statistics.
+ */
 public class StatisticsGUI extends BaseGUI {
     private Controller controller;
     private Text statLabel;
@@ -25,110 +22,148 @@ public class StatisticsGUI extends BaseGUI {
     private String[] statistics = new String[4];
     boolean coolingOff = false;
 
-    public StatisticsGUI(Controller controller, ControllerGUI controllerGUI){
+    /**
+     * Constructor for initializing the GUI with a controller.
+     *
+     * @param controller     The main controller handling the business logic.
+     * @param controllerGUI  The GUI controller for managing GUI components.
+     */
+    public StatisticsGUI(Controller controller, ControllerGUI controllerGUI) {
         super(controller, controllerGUI);
         this.controller = controller;
         populateStatistics();
     }
 
+    /**
+     * Populates the statistics array with formatted strings.
+     * Each string contains a statistic description and its value, separated by a newline character.
+     */
     private void populateStatistics() {
-        statistics[0] = "Total Deaths: " + controller.calculateTotalDeaths();
-        statistics[1] = "Average Total Cases Per Borough: " + controller.calculateAverageTotalCases();
-        statistics[2] = "Average Parks GMR: " + controller.calculateAverageParksGMR();
-        statistics[3] = "Average Transit GMR: " + controller.calculateAverageTransitGMR();
+        statistics[0] = "Total Deaths:\n" + controller.calculateTotalDeaths();
+        statistics[1] = "Average Total Cases Per Borough:\n" + controller.calculateAverageTotalCases();
+        statistics[2] = "Average Parks GMR:\n" + controller.calculateAverageParksGMR();
+        statistics[3] = "Average Transit GMR:\n" + controller.calculateAverageTransitGMR();
     }
 
+    /**
+     * Creates and returns the main scene for the statistics GUI.
+     *
+     * @return The constructed scene with all GUI components.
+     */
     @Override
     public Scene getScene() {
         BorderPane root = getRoot();
 
-        statLabel = new Text(statistics[currentStatIndex]);// Default to the first statistic
+        // Initialize the statistics label with the first statistic.
+        statLabel = new Text(statistics[currentStatIndex]);
         statLabel.setStyle("-fx-font-size: 30px;");
-        statLabel.setWrappingWidth(275); // Sets the wrapping width to a fixed value
-        statLabel.setTextAlignment(TextAlignment.CENTER); // Ensure the text is centered
+        statLabel.setWrappingWidth(275);
+        statLabel.setTextAlignment(TextAlignment.CENTER);
 
-        Button backButton = new Button("<");
-        backButton.setOnAction(e -> {
-            if(!coolingOff) {
-                currentStatIndex = (currentStatIndex - 1 + statistics.length) % statistics.length;
-                transitionBackward();
+        // Back button to navigate to the previous statistic.
+        Button backButton = createNavigationButton("<", () -> transitionBackward());
 
-                backButton.setDisable(true);
-                coolingOff = true;
+        // Forward button to navigate to the next statistic.
+        Button forwardButton = createNavigationButton(">", () -> transitionForward());
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
-                pause.setOnFinished(f -> {
-                    backButton.setDisable(false);
-                    coolingOff = false;
-                });
-
-                pause.play();
-            }
-        });
-
-        Button forwardButton = new Button(">");
-        forwardButton.setOnAction(e -> {
-            if(!coolingOff) {
-                currentStatIndex = (currentStatIndex + 1) % statistics.length;
-                transitionForward();
-
-                forwardButton.setDisable(true);
-                coolingOff = true;
-
-                PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
-                pause.setOnFinished(f -> {
-                    forwardButton.setDisable(false);
-                    coolingOff = false;
-                });
-
-                pause.play();
-            }
-        });
-
-        // Combine navigation buttons and stat display into a single HBox
-        HBox navigationBox = new HBox(90, backButton, statLabel, forwardButton); // Simplified the setup
+        // Navigation box containing back and forward buttons along with the statistics text.
+        HBox navigationBox = new HBox(90, backButton, statLabel, forwardButton);
         navigationBox.setAlignment(Pos.CENTER);
-
         root.setCenter(navigationBox);
 
         return new Scene(root, winWidth, winHeight);
     }
 
+    /**
+     * Creates a navigation button with specified text and action.
+     *
+     * @param buttonText The text to be displayed on the button.
+     * @param action     The action to perform when the button is pressed.
+     * @return The constructed Button instance.
+     */
+    private Button createNavigationButton(String buttonText, Runnable action) {
+        Button button = new Button(buttonText);
+        button.setOnAction(e -> {
+                    if (!coolingOff) {
+                        action.run();
+                        // Disable button temporarily to prevent rapid clicks
+                        button.setDisable(true);
+                        coolingOff = true;
+
+                        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+                        pause.setOnFinished(f -> {
+                                    button.setDisable(false);
+                                    coolingOff = false;
+                            });
+
+                        pause.play();
+                    }
+            });
+        return button;
+    }
+
+    /**
+     * Transitions the statistic text forward, moving to the next statistic.
+     */
     private void transitionForward() {
-        // Execute transition: Move current text to the right and fade out, then bring new text from the left
+        currentStatIndex = (currentStatIndex + 1) % statistics.length;
         executeTransition(50, -50);
     }
 
+    /**
+     * Transitions the statistic text backward, moving to the previous statistic.
+     */
     private void transitionBackward() {
-        // Execute transition: Move current text to the left and fade out, then bring new text from the right
+        currentStatIndex = (currentStatIndex - 1 + statistics.length) % statistics.length;
         executeTransition(-50, 50);
     }
 
+    /**
+     * Executes the transition animation for the statistics text, involving both a fade out and a slide.
+     * This creates a smooth transition effect when navigating between statistics.
+     *
+     * @param moveOutByX The x offset to move the current text out by.
+     * @param moveInByX  The x offset to move the new text in by.
+     */
     private void executeTransition(double moveOutByX, double moveInByX) {
+        // Fade out animation: gradually decreases the opacity of the text to 0.
         FadeTransition fadeOut = new FadeTransition(Duration.millis(250), statLabel);
         fadeOut.setToValue(0);
 
+        // Slide animation: moves the text horizontally.
         TranslateTransition moveOut = new TranslateTransition(Duration.millis(250), statLabel);
         moveOut.setByX(moveOutByX);
 
+        // Combines fade out and slide animations to play them in parallel
         ParallelTransition fadeAndMoveOut = new ParallelTransition(statLabel, fadeOut, moveOut);
-        fadeAndMoveOut.setOnFinished(e -> {
-            // Once the fade out and move are complete, update the text and reset position
-            statLabel.setText(statistics[currentStatIndex]);
-            statLabel.setOpacity(0); // Make the label invisible as it resets to start position
-            statLabel.setTranslateX(moveInByX); // Position the label at the starting point of the incoming animation
+        fadeAndMoveOut.setOnFinished(e -> updateAndAnimateTextIn(moveInByX)); // Callback to run after animations complete.
 
-            FadeTransition fadeIn = new FadeTransition(Duration.millis(250), statLabel);
-            fadeIn.setFromValue(0);
-            fadeIn.setToValue(1);
+        fadeAndMoveOut.play(); // Starts the transition animation.
+    }
 
-            TranslateTransition moveIn = new TranslateTransition(Duration.millis(250), statLabel);
-            moveIn.setByX(-moveInByX); // Move the label back to its central position
+    /**
+     * Updates the statistic text and initiates the 'fade in' and slide-in animations for the new text.
+     * This method is called after the current text has faded out and moved out of view.
+     *
+     * @param moveInByX The x offset to move the new text in by, completing the transition.
+     */
+    private void updateAndAnimateTextIn(double moveInByX) {
+        // Update text and reset visibility and position for the incoming animation.
+        statLabel.setText(statistics[currentStatIndex]);
+        statLabel.setOpacity(0); // Initially invisible for fade in.
+        statLabel.setTranslateX(moveInByX); // Starts off-screen or at initial position for slide in.
 
-            ParallelTransition fadeInWithMoveIn = new ParallelTransition(statLabel, fadeIn, moveIn);
-            fadeInWithMoveIn.play();
-        });
+        // Fade in animation: gradually increases the opacity of the text from 0 to 1.
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(250), statLabel);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
 
-        fadeAndMoveOut.play();
+        // Slide-in animation: moves the text horizontally back to its original position.
+        TranslateTransition moveIn = new TranslateTransition(Duration.millis(250), statLabel);
+        moveIn.setByX(-moveInByX);
+
+        // Combines fade in and slide-in animations to play them in parallel, creating a smooth entry for the new text.
+        ParallelTransition fadeInWithMoveIn = new ParallelTransition(statLabel, fadeIn, moveIn);
+        fadeInWithMoveIn.play(); // Initiates the animations to display the new text.
     }
 }
