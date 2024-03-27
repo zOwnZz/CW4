@@ -227,7 +227,7 @@ public class BaseGUI {
         if (startDate == null || endDate == null) {
             return false;
         }
-        return startDate.isBefore(endDate) && endDate.minusDays(1).isBefore(maxDate) && startDate.plusDays(1).isAfter(minDate);
+        return !startDate.isAfter(endDate) && !endDate.isBefore(minDate) && !startDate.isAfter(maxDate);
     }
 
 }
