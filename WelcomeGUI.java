@@ -9,15 +9,22 @@ import javafx.scene.layout.Region;
 public class WelcomeGUI extends BaseGUI {
     private Controller controller;
     private Boolean ifFirst = true;
+    /**
+     * Constructor assigning all the neccessary variables
+     * @param controller keeps and manages data
+     * @param controllerGUI keeps track of creating and changing scenes
+     */
     public WelcomeGUI(Controller controller, ControllerGUI controllerGUI){
         super(controller, controllerGUI);
         this.controller = controller;
         ifFirst = false;
     }
+    
+    
     public WelcomeGUI(Controller controller, ControllerGUI controllerGUI, Boolean ifFirst){
         super(controller, controllerGUI, ifFirst);
         this.controller = controller;
-        ifFirst = true;
+        
     }
     
     @Override
@@ -54,7 +61,7 @@ public class WelcomeGUI extends BaseGUI {
         center.getChildren().remove(noDateLabel);
         center.getChildren().add(dateLabel);
     }
-    //If user selects an invalid date th
+    
     if(controller.getStartDate() == null){
         center.getChildren().add(noDateLabel);
         center.getChildren().remove(dateLabel);
