@@ -2,15 +2,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
-import java.time.temporal.ChronoUnit;
 
 public class Controller {
     private final ArrayList<CovidData> data;
     private LocalDate startDate, endDate;
     private final LocalDate minDate, maxDate;
     private final int numberOfBoroughs;
-    private final HashMap<String, ArrayList<CovidData>> boroughAndData;
 
     /**
      * Constructor initializes the controller, loads data, and sets up the minimum and maximum dates.
@@ -22,7 +19,7 @@ public class Controller {
         maxDate = getMaxDate();
         startDate = minDate;
         endDate = maxDate;
-        boroughAndData = boroughAndData();
+        HashMap<String, ArrayList<CovidData>> boroughAndData = boroughAndData();
         numberOfBoroughs = boroughAndData.size(); // Initialize the count of boroughs
     }
 
