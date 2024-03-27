@@ -9,7 +9,7 @@ public class Controller {
     private final ArrayList<CovidData> data;
     private LocalDate startDate, endDate;
     private final LocalDate minDate, maxDate;
-    private final int numberOfBoroughs; 
+    private final int numberOfBoroughs;
     private final HashMap<String, ArrayList<CovidData>> boroughAndData;
 
     /**
@@ -22,7 +22,7 @@ public class Controller {
         maxDate = getMaxDate();
         startDate = minDate;
         endDate = maxDate;
-        boroughAndData = boroughAndData(); 
+        boroughAndData = boroughAndData();
         numberOfBoroughs = boroughAndData.size(); // Initialize the count of boroughs
     }
 
@@ -35,7 +35,6 @@ public class Controller {
         for(CovidData covid : data) {
             if(startDate != null && endDate != null) {
                 if (!covid.getDateFormat().isBefore(startDate) && !covid.getDateFormat().isAfter(endDate)) {
-
                     if (boroughAndData.containsKey(covid.getBorough()))
                         boroughAndData.get(covid.getBorough()).add(covid);
                     else {
@@ -97,8 +96,10 @@ public class Controller {
      */
     public int calculateTotalDeaths() {
         int totalDeaths = 0;
+        System.out.println("Start: "+startDate);
+        System.out.println("End: "+endDate);
 
-        for (ArrayList<CovidData> boroughData : boroughAndData.values()) {
+        for (ArrayList<CovidData> boroughData : boroughAndData().values()) {
             for (CovidData data : boroughData) {
                 totalDeaths += data.getNewDeaths();
             }
@@ -114,13 +115,13 @@ public class Controller {
     public double calculateAverageTotalCases() {
         long sumNewCases = 0;
 
-        for (ArrayList<CovidData> boroughData : boroughAndData.values()) {
+        for (ArrayList<CovidData> boroughData : boroughAndData().values()) {
             for (CovidData data : boroughData) {
                 sumNewCases += data.getNewCases();
             }
         }
 
-        // Calculate the average cases per borough 
+        // Calculate the average cases per borough
         double average = (double) sumNewCases / numberOfBoroughs;
 
         // Format the result to 2 decimal places and return
@@ -135,9 +136,9 @@ public class Controller {
         long totalParksGMR = 0;
         int GMRDays = 0; // Tracks days with GMR data
 
-        for (ArrayList<CovidData> boroughData : boroughAndData.values()) {
+        for (ArrayList<CovidData> boroughData : boroughAndData().values()) {
             for (CovidData data : boroughData) {
-                if (data.getParksGMR() != 0) { 
+                if (data.getParksGMR() != 0) {
                     totalParksGMR += data.getParksGMR();
                     GMRDays++;
                 }
@@ -148,7 +149,7 @@ public class Controller {
         if (GMRDays == 0) return 0.0;
 
         // Calculate the average Parks GMR per day with valid data across all boroughs
-        double averageParksGMR = (double) totalParksGMR / GMRDays / numberOfBoroughs;
+        double averageParksGMR = (double) totalParksGMR / GMRDays;
 
         // Format the result to 2 decimal places and return
         return Double.parseDouble(String.format("%.2f", averageParksGMR));
@@ -162,9 +163,9 @@ public class Controller {
         long totalTransitGMR = 0;
         int GMRDays = 0;
 
-        for (ArrayList<CovidData> boroughData : boroughAndData.values()) {
+        for (ArrayList<CovidData> boroughData : boroughAndData().values()) {
             for (CovidData data : boroughData) {
-                if (data.getTransitGMR() != 0) { 
+                if (data.getTransitGMR() != 0) {
                     totalTransitGMR += data.getTransitGMR();
                     GMRDays++;
                 }
@@ -175,7 +176,7 @@ public class Controller {
         if (GMRDays == 0) return 0.0;
 
         // Calculate the average Transit GMR per day with valid data across all boroughs
-        double averageTransitGMR = (double) totalTransitGMR / GMRDays / numberOfBoroughs;
+        double averageTransitGMR = (double) totalTransitGMR / GMRDays;
 
         // Format the result to 2 decimal places and return
         return Double.parseDouble(String.format("%.2f", averageTransitGMR));
