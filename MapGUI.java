@@ -15,14 +15,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
  * MapGUI creates the GUI for the map page of the COVID DATA program
  */
 public class MapGUI extends BaseGUI {
-    private Controller controller;
-    private ArrayList<Button> boroughButtons = new ArrayList<>();
-    private String[] boroughs = {
+    private final Controller controller;
+    private final ArrayList<Button> boroughButtons = new ArrayList<>();
+    private final String[] boroughs = {
             "ENFI", "BARN", "HRGY", "WALT", "HRRW", "BREN", "CAMD", "ISLI", "HACK", "REDB", "HAVE",
             "HILL", "EALI", "KENS", "WEST", "TOWH", "NEWH", "BARK", "HOUN", "HAMM", "WAND", "CITY",
             "GWCH", "BEXL", "RICH", "MERT", "LAMB", "STHW", "LEWS", "KING", "SUTT", "CROY", "BROM"
     };
-    private String[] boroughsFull = {
+    private final String[] boroughsFull = {
             "Enfield", "Barnet", "Haringey", "Waltham Forest", "Harrow", "Brent", "Camden", "Islington", "Hackney", "Redbridge", "Havering",
             "Hillingdon", "Ealing", "Kensington And Chelsea", "Westminster", "Tower Hamlets", "Newham", "Barking And Dagenham", "Hounslow", "Hammersmith And Fulham", "Wandsworth", "City Of London",
             "Greenwich", "Bexley", "Richmond Upon Thames", "Merton", "Lambeth", "Southwark", "Lewisham", "Kingston Upon Thames", "Sutton", "Croydon", "Bromley"
@@ -47,21 +47,21 @@ public class MapGUI extends BaseGUI {
         //Map
         Pane map = new Pane();
         //Specific coordinates to place buttons in the right position in the pane
-        int yCord = 0;
+        int yCord;
         int xCord = 0;
         map.getStylesheets().add("style.CSS");//add hover effect over the buttons
 
         //create the hexagonal shape of the buttons
         SVGPath hexagon = new SVGPath();
         hexagon.setContent("M 0.0 -50 L 43 -25 L 43 25 L 6e-15 50 L -43 25 L -43 -25 Z");
-        for (int i = 0; i < boroughs.length; i++) {
-            Button button = new Button(boroughs[i]);
+        for (String borough : boroughs) {
+            Button button = new Button(borough);
             button.setOnAction(event -> infoWindow(button.getText()));
             button.setShape(hexagon);
             button.setPickOnBounds(false); // Ensure clicks are only registered on the non-transparent parts of the shape
             button.setMinSize(80, 90); //w,h
             //ensure no new buttons are added when the page is refreshed
-            if(boroughButtons.size() < 33){
+            if (boroughButtons.size() < 33) {
                 boroughButtons.add(button);
             }
         }
@@ -119,7 +119,7 @@ public class MapGUI extends BaseGUI {
         //Create and add 5 squares to the pane
         for (int i = 1; i < 11; i++) {
             // Create a square (Rectangle with equal width and height)
-            Double j = i/10.0;//decide the opacity of the square
+            double j = i/10.0;//decide the opacity of the square
             Rectangle square = new Rectangle(25, 25); // x, y, width, height
             square.setFill(Color.RED);
             square.setStroke(Color.TRANSPARENT); // Set the border color to black
@@ -142,8 +142,8 @@ public class MapGUI extends BaseGUI {
      */
     private HashMap<String, String> indexedNames(){
         HashMap<String, String> boroughNameLink = new HashMap<>();
-        String smallName = new String();
-        String bigName = new String();
+        String smallName;
+        String bigName;
         for (int i = 0; i < boroughs.length; i++){
             smallName = boroughs[i];
             bigName = boroughsFull[i];
@@ -159,12 +159,12 @@ public class MapGUI extends BaseGUI {
      */
     private void infoWindow(String borough){
         //make a hashmap connecting the borough code on the button to the full borough name in the data
-        HashMap<String, String> names = new HashMap<>();
+        HashMap<String, String> names;
         names = indexedNames();
         String fName = names.get(borough);
 
         //create a hashmap of all the data within the selected dates for the borough in question
-        HashMap <String, ArrayList<CovidData>> info = new HashMap<>();
+        HashMap <String, ArrayList<CovidData>> info;
         info = controller.boroughAndData();
 
         //Create gui components to present the data in the new window
@@ -214,7 +214,7 @@ public class MapGUI extends BaseGUI {
         }
 
         //add data to the table
-        ArrayList<CovidData> boroughData = new ArrayList<>();
+        ArrayList<CovidData> boroughData;
         for (String key : info.keySet()) {
             if(key.equals(fName)){
                 boroughData = info.get(key);
@@ -244,18 +244,18 @@ public class MapGUI extends BaseGUI {
      */
     private void deathVisuals(){
         //make a hashmap connecting the borough code on the button to the full borough name in the data
-        HashMap<String, String> names = new HashMap<>();
+        HashMap<String, String> names;
         names = indexedNames();
 
         //create a hashmap off all the data within the selected dates
-        HashMap <String, ArrayList<CovidData>> info = new HashMap<>();
+        HashMap <String, ArrayList<CovidData>> info;
         info = controller.boroughAndData();
 
         //create an array list of the data for the borough in question
-        ArrayList<CovidData> boroughData = new ArrayList<>();
-        ArrayList<Integer> deaths = new ArrayList<Integer>();
-        String shortName = new String();
-        String longName = new String();
+        ArrayList<CovidData> boroughData;
+        ArrayList<Integer> deaths = new ArrayList<>();
+        String shortName;
+        String longName;
         int totalDeaths = 0;
         for(Button b : boroughButtons){
             shortName = b.getText();
@@ -292,18 +292,15 @@ public class MapGUI extends BaseGUI {
         maxValue2 = maxValue2 - minValue2;
 
         //calculates the colour of the borough to show as a chloropleth map
+        deaths.replaceAll(integer -> integer - minValue2);
         for(int i = 0; i < deaths.size(); i++){
-            deaths.set(i, deaths.get(i) - minValue2);
-        }
-        for(int i = 0; i < deaths.size(); i++){
-            Double opacity = Math.max((double) deaths.get(i) / (double) maxValue2, 0.1);
+            double opacity = Math.max((double) deaths.get(i) / (double) maxValue2, 0.1);
             if(Double.isNaN(opacity)){
                 boroughButtons.get(i).setStyle("-fx-background-color: rgb(255, 255, 255)");
             }
             else{
-                boroughButtons.get(i).setStyle("-fx-background-color: rgba(255, 0, 0," + String.valueOf(opacity) + ")");
+                boroughButtons.get(i).setStyle("-fx-background-color: rgba(255, 0, 0," + opacity + ")");
             }
-
         }
     }
 }
