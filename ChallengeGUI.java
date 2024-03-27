@@ -16,7 +16,6 @@ import java.util.HashMap;
 public class ChallengeGUI extends BaseGUI {
     private ChallengeControl simulator;
     private Boolean firstChart;
-    private Controller controller;
 
     /**
      * Constructor assigning all the neccessary variables
