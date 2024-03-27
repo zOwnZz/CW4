@@ -16,10 +16,10 @@ import javafx.animation.PauseTransition;
  * It uses animations to transition between different statistics.
  */
 public class StatisticsGUI extends BaseGUI {
-    private Controller controller;
+    private final Controller controller;
     private Text statLabel;
     private int currentStatIndex = 0;
-    private String[] statistics = new String[4];
+    private final String[] statistics = new String[4];
     boolean coolingOff = false;
 
     /**
@@ -61,10 +61,10 @@ public class StatisticsGUI extends BaseGUI {
         statLabel.setTextAlignment(TextAlignment.CENTER);
 
         // Back button to navigate to the previous statistic.
-        Button backButton = createNavigationButton("<", () -> transitionBackward());
+        Button backButton = createNavigationButton("<", this::transitionBackward);
 
         // Forward button to navigate to the next statistic.
-        Button forwardButton = createNavigationButton(">", () -> transitionForward());
+        Button forwardButton = createNavigationButton(">", this::transitionForward);
 
         // Navigation box containing back and forward buttons along with the statistics text.
         HBox navigationBox = new HBox(90, backButton, statLabel, forwardButton);
