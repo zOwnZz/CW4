@@ -32,10 +32,8 @@ public class StatisticsGUI extends BaseGUI {
     }
 
     private void populateStatistics() {
-        HashMap<String, ArrayList<CovidData>> boroughData = controller.boroughAndData();
-
         statistics[0] = "Total Deaths: " + controller.calculateTotalDeaths();
-        statistics[1] = "Average Total Cases: " + controller.calculateAverageTotalCases();
+        statistics[1] = "Average Total Cases Per Borough: " + controller.calculateAverageTotalCases();
         statistics[2] = "Average Parks GMR: " + controller.calculateAverageParksGMR();
         statistics[3] = "Average Transit GMR: " + controller.calculateAverageTransitGMR();
     }
@@ -44,8 +42,9 @@ public class StatisticsGUI extends BaseGUI {
     public Scene getScene() {
         BorderPane root = getRoot();
 
-        statLabel = new Text(statistics[currentStatIndex]); // Default to the first statistic
-        statLabel.setWrappingWidth(200); // Sets the wrapping width to a fixed value
+        statLabel = new Text(statistics[currentStatIndex]);// Default to the first statistic
+        statLabel.setStyle("-fx-font-size: 30px;");
+        statLabel.setWrappingWidth(275); // Sets the wrapping width to a fixed value
         statLabel.setTextAlignment(TextAlignment.CENTER); // Ensure the text is centered
 
         Button backButton = new Button("<");
@@ -87,7 +86,7 @@ public class StatisticsGUI extends BaseGUI {
         });
 
         // Combine navigation buttons and stat display into a single HBox
-        HBox navigationBox = new HBox(10, backButton, statLabel, forwardButton); // Simplified the setup
+        HBox navigationBox = new HBox(90, backButton, statLabel, forwardButton); // Simplified the setup
         navigationBox.setAlignment(Pos.CENTER);
 
         root.setCenter(navigationBox);
@@ -97,12 +96,12 @@ public class StatisticsGUI extends BaseGUI {
 
     private void transitionForward() {
         // Execute transition: Move current text to the right and fade out, then bring new text from the left
-        executeTransition(75, -75);
+        executeTransition(50, -50);
     }
 
     private void transitionBackward() {
         // Execute transition: Move current text to the left and fade out, then bring new text from the right
-        executeTransition(-75, 75);
+        executeTransition(-50, 50);
     }
 
     private void executeTransition(double moveOutByX, double moveInByX) {
