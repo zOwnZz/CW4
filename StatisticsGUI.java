@@ -84,21 +84,21 @@ public class StatisticsGUI extends BaseGUI {
     private Button createNavigationButton(String buttonText, Runnable action) {
         Button button = new Button(buttonText);
         button.setOnAction(e -> {
-                    if (!coolingOff) {
-                        action.run();
-                        // Disable button temporarily to prevent rapid clicks
-                        button.setDisable(true);
-                        coolingOff = true;
+            if (!coolingOff) {
+                action.run();
+                // Disable button temporarily to prevent rapid clicks
+                button.setDisable(true);
+                coolingOff = true;
 
-                        PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
-                        pause.setOnFinished(f -> {
-                                    button.setDisable(false);
-                                    coolingOff = false;
-                            });
+                PauseTransition pause = new PauseTransition(Duration.seconds(0.5));
+                pause.setOnFinished(f -> {
+                    button.setDisable(false);
+                    coolingOff = false;
+                });
 
-                        pause.play();
-                    }
-            });
+                pause.play();
+            }
+        });
         return button;
     }
 
