@@ -2,14 +2,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
+import java.time.temporal.ChronoUnit;
 
 public class Controller {
     private final ArrayList<CovidData> data;
     private LocalDate startDate, endDate;
     private final LocalDate minDate, maxDate;
+    private final int numberOfBoroughs; 
+    private final HashMap<String, ArrayList<CovidData>> boroughAndData;
 
     /**
-     * Constructor creating all necessary objects and setting minimum and maximum date
+     * Constructor initializes the controller, loads data, and sets up the minimum and maximum dates.
      */
     public Controller(){
         CovidDataLoader loader = new CovidDataLoader();
@@ -18,6 +22,8 @@ public class Controller {
         maxDate = getMaxDate();
         startDate = minDate;
         endDate = maxDate;
+        boroughAndData = boroughAndData(); 
+        numberOfBoroughs = boroughAndData.size(); // Initialize the count of boroughs
     }
 
     /**
@@ -58,185 +64,136 @@ public class Controller {
     }
 
     /**
-     * @return the minimum date in the whole data
+     * @return The earliest date in the dataset.
      */
     public LocalDate getMinDate(){
-        return data.stream()
-        .map(CovidData::getDate)
-        .map(LocalDate::parse)
-        .min(Comparator.naturalOrder())
-        .orElse(null);
+        return data.stream().map(CovidData::getDate).map(LocalDate::parse).min(Comparator.naturalOrder()).orElse(null);
     }
 
     /**
-     * @return the maximum date in the whole data
+     * @return The latest date in the dataset.
      */
     public LocalDate getMaxDate(){
-        return data.stream()
-        .map(CovidData::getDate)
-        .map(LocalDate::parse)
-        .max(Comparator.naturalOrder())
-        .orElse(null);
+        return data.stream().map(CovidData::getDate).map(LocalDate::parse).max(Comparator.naturalOrder()).orElse(null);
     }
 
     /**
-     * @return the start date chosen by user
+     * @return The start date currently selected for filtering data.
      */
     public LocalDate getStartDate(){
         return startDate;
     }
 
     /**
-     * @return end date chosen by user
+     * @return The end date currently selected for filtering data.
      */
     public LocalDate getEndDate(){
         return endDate;
     }
 
     /**
-     * Calculates the total difference in deaths across all boroughs between the earliest and latest dates within a specified date range.
-     * This method iterates over the CovidData entries, tracking the minimum and maximum death counts for each borough within the date range.
-     * The total deaths difference is the sum of differences between maximum and minimum deaths for each borough.
-     * 
-     * @return The total deaths difference across all boroughs within the specified date range.
+     * Calculates the total number of new deaths across all boroughs within the specified date range.
+     * @return The sum of new deaths across all boroughs within the date range.
      */
     public int calculateTotalDeaths() {
-        // Initialization of variables to track the earliest and latest dates and death counts per borough
-        int totalDeathsDifference = 0;
-        HashMap<String, LocalDate> minDates = new HashMap<>();
-        HashMap<String, LocalDate> maxDates = new HashMap<>();
-        HashMap<String, Integer> minDeaths = new HashMap<>();
-        HashMap<String, Integer> maxDeaths = new HashMap<>();
+        int totalDeaths = 0;
 
-        // Loop through each CovidData entry to update minimum and maximum dates and deaths per borough
-        for (CovidData covid : data) {
-            LocalDate date = covid.getDateFormat();
-            if ((startDate != null && endDate != null) && (date.isAfter(startDate) && date.isBefore(endDate))) {
-                String borough = covid.getBorough();
-
-                // Update earliest date and death count per borough
-                if (!minDates.containsKey(borough) || date.isBefore(minDates.get(borough))) {
-                    minDates.put(borough, date);
-                    minDeaths.put(borough, covid.getTotalDeaths());
-                }
-
-                // Update latest date and death count per borough
-                if (!maxDates.containsKey(borough) || date.isAfter(maxDates.get(borough))) {
-                    maxDates.put(borough, date);
-                    maxDeaths.put(borough, covid.getTotalDeaths());
-                }
+        for (ArrayList<CovidData> boroughData : boroughAndData.values()) {
+            for (CovidData data : boroughData) {
+                totalDeaths += data.getNewDeaths();
             }
         }
 
-        // Calculate and return the total deaths difference
-        for (String borough : minDeaths.keySet()) {
-            totalDeathsDifference += maxDeaths.get(borough) - minDeaths.get(borough);
-        }
-
-        return totalDeathsDifference;
+        return totalDeaths;
     }
 
     /**
-     * Calculates the average number of new Covid cases across all boroughs within a specified date range.
-     * The method sums up new cases within the date range and divides by the total number of boroughs to find the average.
-     * 
-     * @return The average number of new Covid cases across all boroughs.
+     * Calculates the average number of new Covid cases per borough over the specified date range.
+     * @return The average number of new Covid cases per borough.
      */
     public double calculateAverageTotalCases() {
-        int totalNewCases = 0;
+        long sumNewCases = 0;
 
-        // Loop through each CovidData entry to sum up new cases within the date range
-        for (CovidData covid : data) {
-            if (covid.getDateFormat().isAfter(startDate) && covid.getDateFormat().isBefore(endDate)) {
-                totalNewCases += covid.getNewCases();
+        for (ArrayList<CovidData> boroughData : boroughAndData.values()) {
+            for (CovidData data : boroughData) {
+                sumNewCases += data.getNewCases();
             }
         }
 
-        // Calculate and return the average new cases per borough
-        return totalNewCases / 32.0;
+        // Calculate the average cases per borough 
+        double average = (double) sumNewCases / numberOfBoroughs;
+
+        // Format the result to 2 decimal places and return
+        return Double.parseDouble(String.format("%.2f", average));
     }
 
     /**
-     * Calculates the average GMR value for parks across all boroughs within a specified date range.
-     * It aggregates GMR values for parks per borough and divides by the number of days to find the average, then averages these across all boroughs.
-     * 
-     * @return The average GMR value for parks across all boroughs.
+     * Calculates the average parks GMR value across all boroughs within the specified date range.
+     * @return The average parks GMR value per day per borough over the selected date range.
      */
     public double calculateAverageParksGMR() {
-        double sumOfAverages = 0.0;
-        HashMap<String, Integer> boroughSum = new HashMap<>();
-        HashMap<String, Integer> boroughDays = new HashMap<>();
+        long totalParksGMR = 0;
+        int GMRDays = 0; // Tracks days with GMR data
 
-        // Loop through each CovidData object in the data collection.
-        for (CovidData covid : data) {
-            // Check if the date of the current CovidData object is within the specified date range.
-            if (covid.getDateFormat().isAfter(startDate) && covid.getDateFormat().isBefore(endDate)) {
-                // Retrieve the borough name from the current CovidData object.
-                String borough = covid.getBorough();
-                // Retrieve the GMR value for parks from the current CovidData object.
-                int currentParksGMR = covid.getParksGMR();
-                // Update the total GMR value for the current borough by adding the current GMR value.
-                // If the borough does not exist in the map, it initializes the sum with 0 and then adds the current GMR value.
-                boroughSum.put(borough, boroughSum.getOrDefault(borough, 0) + currentParksGMR);
-                // Increment the count of days with data for the current borough by 1.
-                // If the borough does not exist in the map, it initializes the count with 0 and then increments by 1.
-                boroughDays.put(borough, boroughDays.getOrDefault(borough, 0) + 1);
+        for (ArrayList<CovidData> boroughData : boroughAndData.values()) {
+            for (CovidData data : boroughData) {
+                if (data.getParksGMR() != 0) { 
+                    totalParksGMR += data.getParksGMR();
+                    GMRDays++;
+                }
             }
         }
 
-        // Loop through each borough present in the boroughSum map.
-        for (String borough : boroughSum.keySet()) {
-            // Calculate the average GMR for parks for the current borough by dividing the total GMR value by the number of days with data.
-            double average = boroughSum.get(borough) / (double) boroughDays.get(borough);
-            // Add the calculated average GMR for the current borough to the sum of averages.
-            sumOfAverages += average;
-        }
-        
-        return sumOfAverages / 32.0;
+        // Prevent division by zero
+        if (GMRDays == 0) return 0.0;
+
+        // Calculate the average Parks GMR per day with valid data across all boroughs
+        double averageParksGMR = (double) totalParksGMR / GMRDays / numberOfBoroughs;
+
+        // Format the result to 2 decimal places and return
+        return Double.parseDouble(String.format("%.2f", averageParksGMR));
     }
 
     /**
-     * Calculates the average GMR value for transit stations across all boroughs within a specified date range.
-     * It aggregates GMR values for transit stations per borough and divides by the number of days to find the average, then averages these across all boroughs.
-     * 
-     * @return The average GMR value for transit stations across all boroughs.
+     * Calculates the average transit GMR value across all boroughs within the specified date range.
+     * @return The average transit GMR value per day per borough over the selected date range.
      */
     public double calculateAverageTransitGMR() {
-        double sumOfAverages = 0.0;
-        HashMap<String, Integer> boroughSum = new HashMap<>();
-        HashMap<String, Integer> boroughDays = new HashMap<>();
+        long totalTransitGMR = 0;
+        int GMRDays = 0;
 
-        for (CovidData covid : data) {
-            if (covid.getDateFormat().isAfter(startDate) && covid.getDateFormat().isBefore(endDate)) {
-                String borough = covid.getBorough();
-                int currentTransitGMR = covid.getTransitGMR();
-                boroughSum.put(borough, boroughSum.getOrDefault(borough, 0) + currentTransitGMR);
-                boroughDays.put(borough, boroughDays.getOrDefault(borough, 0) + 1);
+        for (ArrayList<CovidData> boroughData : boroughAndData.values()) {
+            for (CovidData data : boroughData) {
+                if (data.getTransitGMR() != 0) { 
+                    totalTransitGMR += data.getTransitGMR();
+                    GMRDays++;
+                }
             }
         }
 
-        for (String borough : boroughSum.keySet()) {
-            double average = boroughSum.get(borough) / (double) boroughDays.get(borough);
-            sumOfAverages += average;
-        }
+        // Prevent division by zero
+        if (GMRDays == 0) return 0.0;
 
-        return sumOfAverages / 32.0;
+        // Calculate the average Transit GMR per day with valid data across all boroughs
+        double averageTransitGMR = (double) totalTransitGMR / GMRDays / numberOfBoroughs;
+
+        // Format the result to 2 decimal places and return
+        return Double.parseDouble(String.format("%.2f", averageTransitGMR));
     }
 
     /**
-     * So our program does not calculate min date multiple times, it does it once, saves and returns here
-     * @return minimum date in dataset
+     * Provides the minimum date in the dataset that has been calculated and stored.
+     * @return The minimum date in the dataset.
      */
     public LocalDate getMinDateCalculated(){
         return minDate;
     }
 
     /**
-     * So our program does not calculate min date multiple times, it does it once, saves and returns here
-     * @return minimum date in dataset
+     * Provides the maximum date in the dataset that has been calculated and stored.
+     * @return The maximum date in the dataset.
      */
     public LocalDate getMaxDateCalculated(){
         return maxDate;
     }
-
 }
